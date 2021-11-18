@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="svg12" width="36.181" height="36.136" version="1.1" viewBox="0 0 36.181 36.136" xmlns="http://www.w3.org/2000/svg">
- <defs id="defs4">
-  <style id="style2">.a{fill:#000;stroke:none;stroke-linejoin:round;stroke-width:5px;}</style>
- </defs>
- <title id="title6">house</title>
- <path id="path8" class="a" d="m36.151 14.056a.83.83 0 00-.4-.85 9.06 9.06 0 01-.89-.7l-8.54-6.45-7.91-6a1 1 0 00-.66 0l-7.91 6-8.54 6.45a9 9 0 01-.89.7.83.83 0 00-.4.85q0 4.67 0 9.35v11.93c0 .65.16.81.83.8h10.56c.62 0 .78-.18.77-.78v-11c0-.53.19-.7.74-.68h10.37c.55 0 .74.15.74.68v11c0 .6.15.79.77.78h10.56c.67 0 .83-.15.83-.8v-11.93q-.03-4.67-.03-9.35z"/>
-</svg>
