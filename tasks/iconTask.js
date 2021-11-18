@@ -31,8 +31,8 @@ function renderIcon(ctx, condition) {
   
   img.onload = () => {
     
-    let scaleFactor = condition.scaleFactor || 1 / Math.max(img.width, img.height);
-    let scale = condition.size * scaleFactor;
+    let scaleFactor = condition.scaleFactor || (1 / Math.max(img.width, img.height));
+    let scale = (condition.size * scaleFactor) || 1;
     
     let w = img.width * scale,
         h = img.height * scale;
