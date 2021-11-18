@@ -267,6 +267,7 @@ module.exports = {
           let choices = Object.entries(icons).map(([k,v]) => ({label: k, icon: v, response: {icon: v}}));
           
           return iconTask({
+            name: "icon_sets",
             //icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
             icon: sequence(Object.values(icons), { loop: true, stepCount: 4, preventContinuation: true }),
             baseURL: resource.url("resources/icons/maki/"),
