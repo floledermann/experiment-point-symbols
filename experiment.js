@@ -267,7 +267,8 @@ module.exports = {
           let choices = Object.entries(icons).map(([k,v]) => ({label: k, icon: v, response: {icon: v}}));
           
           return iconTask({
-            icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
+            //icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
+            icon: sequence(Object.values(icons), { loop: true, stepCount: 4, preventContinuation: true }),
             baseURL: resource.url("resources/icons/maki/"),
             size: staircase({
               startValue: "5.5mm",
@@ -278,7 +279,7 @@ module.exports = {
               minReversals: context => context.minReversals,
             }),
             scaleFactor: 1/15,
-            threshold: 180,
+            threshold: sequence([0,180], {loop: true}),
             choices: choices,
             buttonCondition: { size: "8mm", threshold: false },
             resources: "resources/icons/maki",
