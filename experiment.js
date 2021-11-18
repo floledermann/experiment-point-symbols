@@ -267,21 +267,32 @@ module.exports = {
           let choices = Object.entries(icons).map(([k,v]) => ({label: k, icon: v, response: {icon: v}}));
           
           return iconTask({
-            icon: random.shuffle(Object.values(icons), { loop: true, preventContinuation: true }),
-            baseURL: resource.url("resources/icons/maki"),
+            icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
+            baseURL: resource.url("resources/icons/maki/"),
             size: staircase({
-              startValue: "5.0mm",
+              startValue: "5.5mm",
               stepSize: 0.1,
               stepSizeFine: 0.05,
               numReversalsFine: 3,
               stepType: "linear", 
               minReversals: context => context.minReversals,
             }),
+            scaleFactor: 1/15,
+            threshold: 180,
             choices: choices,
+            buttonCondition: { size: "8mm", threshold: false },
             resources: "resources/icons/maki",
             interfaces: {
-              display: deviceContext => deviceContext.targetStation == deviceContext.deviceId ? icon.renderer : null,
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
             },
+            css: `
+              .has-ui-response .buttons button {
+                height: 5.8em;
+              }
+              .has-ui-response .buttons button .label {
+                height: 2em;
+              }
+            `
           })
         },
         

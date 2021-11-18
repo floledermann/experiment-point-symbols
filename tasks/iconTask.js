@@ -8,7 +8,8 @@ const DEFAULTS = {
   description: "A simple Task to display an icon and present buttons for feedback",
   size: "5mm",
   backgroundIntensity: 1.0,
-  foregroundIntensity: 0.0
+  foregroundIntensity: 0.0,
+  choices: [{label: "Continue"}]
 };
 
 
@@ -18,13 +19,54 @@ function renderIcon(ctx, condition) {
     size: 10,
   }, condition);
   
-  ctx.beginPath();
-  ctx.moveTo(-size,-size);
-  ctx.lineTo(size,-size);
-  ctx.lineTo(size,size);
-  ctx.lineTo(-size,size);
-  ctx.closePath();
-  ctx.fill();
+  let img = new Image();
+  img.src = condition.baseURL + condition.icon;
+  
+  let canvas2 = null, ctx2 = null;
+  if (condition.threshold) {
+    canvas2 = new OffscreenCanvas(ctx.canvas.width, ctx.canvas.height);
+    ctx2 = canvas2.getContext("2d");
+    ctx2.setTransform(ctx.getTransform());
+  }
+  
+  img.onload = () => {
+    
+    let scaleFactor = condition.scaleFactor || 1 / Math.max(img.width, img.height);
+    let scale = condition.size * scaleFactor;
+    
+    let w = img.width * scale,
+        h = img.height * scale;
+        
+    ctx.drawImage(img, -w/2, -h/2, w, h);
+    
+    if (condition.threshold) {
+      let idata = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+      let data = idata.data;
+      for (let i=0; i<data.length; i+=4) {
+        let val = data[i] + data[i+1] + data[i+2];
+        if (val > 3 * condition.threshold) {
+          data[i] = 255;
+          data[i+1] = 255;
+          data[i+2] = 255;
+        }
+        else {
+          data[i] = 0;
+          data[i+1] = 0;
+          data[i+2] = 0;
+        }
+        if (data[i+3] > condition.threshold) {
+          //console.log(data[i+3]);
+          data[i+3] = 255;
+        }
+        else {
+          data[i+3] = 0;
+        }
+      }
+      ctx.putImageData(idata, 0, 0);
+      //ctx.drawImage(img, -w/2, -h/2, w, h);
+    }
+  };
+  
  
 }
 
@@ -32,16 +74,25 @@ let renderer = config => canvasRenderer(renderIcon, {
   dimensions: ["size"]
 });
 
+let buttonRenderer = config => canvasRenderer(renderIcon, {
+  dimensions: ["size"],
+  // make sure to specify width and height of the canvas in pixels
+  width: 100,
+  height: 50,
+  // each condition received can be adapted to the button by overriding some of its properties
+  overrideCondition: config.buttonCondition || {
+    size: "8mm"
+  }
+});
+
 let buttons = config => htmlButtons({
   buttons: condition => condition.choices.map(
     choice => ({
-      label: choice,
-      response: {text: choice} 
+      label: choice.label,
+      response: choice.response || choice,
+      subUI: buttonRenderer(config)
     })
-  ),
-  // CSS can be passed to the buttons with the "css" property upon task initialization
-  // TODO: "css" should be a first-level member of the task frontend object, not added to individual UIs like now.
-  css: config.css
+  )
 });
 
 
