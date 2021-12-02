@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+<script>
+let svgImg = document.createElement("object");
+document.body.appendChild(svgImg);
+
+let pixelWidth = 500;
+let resPPI = 96;
+let sizeMM = 6;
+let baseIconSize = 15;
+
+svgImg.type = "image/svg+xml";
+svgImg.data = "map1_inkscape.svg";
+svgImg.style.width = pixelWidth + "px";
+
+svgImg.addEventListener("load", e => {
+  //let icons = "airport,airfield,bar,hospital".split(",").map(f => "icons/"+f+".svg");
+  let icons = "car,car-rental,car-repair,road-accident".split(",").map(f => "icons/"+f+".svg");
+  let svg = svgImg.getSVGDocument();
+  let sizePX = sizeMM * resPPI / 25.4 * 1000 / pixelWidth;
+  let scaleFactor = sizePX / baseIconSize;
+  let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
+  
+  for (let i=1; i<17; i++) {
+    let g = svg.getElementById("position"+i);
+    g.innerHTML += '<image href="' + icons[Math.floor(Math.random()*icons.length)] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+  }
+});
+
+</script>
+</body>
+</html>
