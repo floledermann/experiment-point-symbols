@@ -315,6 +315,12 @@ module.exports = {
         
           let baseMaps = "map1,map2".split(",").map(f => "resources/svg_maps/" + f + ".svg");
           
+          let icons = [
+            { src: "", title: "Foo" },
+            { src: "", title: "Foo" },
+            { src: "", title: "Foo" },
+            { src: "", title: "Foo" },
+          ];
           // icons ordered by similarity
           let iconSet = random.pick([
             "a,b,c,d".split(","),
@@ -363,6 +369,8 @@ module.exports = {
             dimensions: "iconSize",
             interfaces: {
               response: config => context => htmlButtons({
+                header: condition => '<h1>Count the number of<br><img src="' + condition.iconSet[0].src + '"> ' + condition.title + '</h1>',
+                buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
               })
             },
             resources: [
