@@ -14,6 +14,7 @@ const resource = require("stimsrv/util/resource");
 const htmlButtons = require("stimsrv/ui/htmlButtons");
 
 const iconTask = require("./tasks/iconTask.js");
+const svgTask = require("./tasks/augmentedSVGTask.js");
 //const dashedline = require("./tasks/dashedline.js");
 
 const setup = require("./setup-lab.js");
@@ -276,7 +277,7 @@ module.exports = {
               stepSize: 0.1,
               stepSizeFine: 0.05,
               numReversalsFine: 3,
-              stepType: "linear", 
+              stepType: "linear",
               minReversals: context => context.minReversals,
             }),
             scaleFactor: 1/15,
@@ -306,7 +307,33 @@ module.exports = {
         
         // TODO: Subjective judgement of shape distortion with contrast enhancement
 
-        // TODO: Count icons on map
+        // Count icons on map
+        
+        () => {
+        
+          let baseMaps = ["map1"].map(f => "resources/svg_maps/" + f + ".svg");
+        
+          return augmentedSVGTask({
+            svg: random.shuffle(baseMaps),
+            locations: "#positions > g",
+            augmentLocation: context => condition => (location, index, locations) => {
+              
+            },
+            iconSize: staircase({
+              startValue: "5.5mm",
+              stepSize: 0.1,
+              stepSizeFine: 0.05,
+              numReversalsFine: 3,
+              stepType: "linear",
+              minReversals: context => context.minReversals,
+            }),
+            resources: [
+              "resources/svg_maps/",
+              "resources/icons"
+            ]
+          });
+        
+        }
         
       ] // end of loop tasks
     }),
