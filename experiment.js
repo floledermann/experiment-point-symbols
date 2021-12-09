@@ -8,6 +8,8 @@ const staircase = require("stimsrv/controller/staircase");
 const random = require("stimsrv/controller/random");
 const sequence = require("stimsrv/controller/sequence");
 
+const Dimension = require("another-dimension");
+
 const filestorage = require("stimsrv/storage/filestorage");
 
 const resource = require("stimsrv/util/resource");
@@ -317,7 +319,7 @@ module.exports = {
             svg: random.shuffle(baseMaps),
             locations: "#positions > g",
             augmentLocation: context => condition => (location, index, locations) => {
-              
+              location.innerHTML = '<image href="' + icons[Math.floor(Math.random()*icons.length)] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
             },
             iconSize: staircase({
               startValue: "5.5mm",
@@ -327,6 +329,10 @@ module.exports = {
               stepType: "linear",
               minReversals: context => context.minReversals,
             }),
+            transformConditionOnClient: clientContext => condition => {
+              Dimension.configure(clientContext);
+              condition.iconSize = Dimension(condition.iconSize).toNumber("px");
+            },
             resources: [
               "resources/svg_maps/",
               "resources/icons"
