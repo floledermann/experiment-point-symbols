@@ -314,12 +314,40 @@ module.exports = {
         () => {
         
           let baseMaps = ["map1"].map(f => "resources/svg_maps/" + f + ".svg");
-        
+                    
+          // icons ordered by similarity
+          let iconSet = random.pick([
+            ["a","b","c","d"],
+            ["b","a","c","d"],
+            ["c","d","b","a"],
+            ["d","c","a","b"]
+          ]);
+          
+          // first icon is target, count 2-7
+          // of remaining spaces, use half (rounded up) for next, recursively
+          // (based on 12 spots)
+          let countsByIndex = random.pick([
+            [2,5,3,2],
+            [3,5,2,2],
+            [4,4,2,2],
+            [5,4,2,1],
+            [6,3,2,1],
+            [7,3,1,1]
+          ]);
+          
           return augmentedSVGTask({
-            svg: random.shuffle(baseMaps),
+            svg: random.shuffle(baseMaps, {loop: true}),
             locations: "#positions > g",
-            augmentLocation: context => condition => (location, index, locations) => {
-              location.innerHTML = '<image href="' + icons[Math.floor(Math.random()*icons.length)] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+            augmentLocation: context => condition => {
+              let indices = [];
+              for (let i=0; i<condition.countsByIndex.length; i++) {
+                for (let j=0; j<condition.countsByIndex[i]; j++) indices.push(i);
+              }
+              indices = random.shuffle(indices)();
+              return (location, index, locations) => {
+                let iconIndex = indices.next();
+                location.innerHTML = '<image href="' + condition.iconSet[iconIndex] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+              };
             },
             iconSize: staircase({
               startValue: "5.5mm",
@@ -329,9 +357,11 @@ module.exports = {
               stepType: "linear",
               minReversals: context => context.minReversals,
             }),
-            transformConditionOnClient: clientContext => condition => {
-              Dimension.configure(clientContext);
-              condition.iconSize = Dimension(condition.iconSize).toNumber("px");
+            // static configuration
+            dimensions: "iconSize",
+            interfaces: {
+              response: config => context => htmlButtons({
+              })
             },
             resources: [
               "resources/svg_maps/",
