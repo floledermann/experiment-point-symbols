@@ -313,14 +313,14 @@ module.exports = {
         
         () => {
         
-          let baseMaps = ["map1"].map(f => "resources/svg_maps/" + f + ".svg");
-                    
+          let baseMaps = "map1,map2".split(",").map(f => "resources/svg_maps/" + f + ".svg");
+          
           // icons ordered by similarity
           let iconSet = random.pick([
-            ["a","b","c","d"],
-            ["b","a","c","d"],
-            ["c","d","b","a"],
-            ["d","c","a","b"]
+            "a,b,c,d".split(","),
+            "b,a,c,d".split(","),
+            "c,d,b,a".split(","),
+            "d,c,a,b".split(",")
           ]);
           
           // first icon is target, count 2-7
@@ -345,6 +345,8 @@ module.exports = {
               }
               indices = random.shuffle(indices)();
               return (location, index, locations) => {
+                // let scaleFactor = sizePX / baseIconSize;
+                // let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
                 let iconIndex = indices.next();
                 location.innerHTML = '<image href="' + condition.iconSet[iconIndex] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
               };
