@@ -1,6 +1,9 @@
 
 const simpleTask = require("stimsrv/task/simpleTask");
 const htmlButtons = require("stimsrv/ui/htmlButtons");
+const resource = require("stimsrv/util/resource");
+const displayConfig = require("stimsrv/stimulus/displayConfig");
+const random = require("stimsrv/controller/random");
 
 const DEFAULTS = {
   name: "SVG",
@@ -11,33 +14,75 @@ const DEFAULTS = {
 function svgRenderer(options) {
 
   options = Object.assign({
+    dimensions: [],
+    defaultDimensions: ["width", "height"],
   }, options);
+
+  options.dimensions = options.dimensions.concat(options.defaultDimensions);
+  
+  function augmentSVG(svg, condition, context) {
+    let indices = [];
+    for (let i=0; i<condition.countsByIndex.length; i++) {
+      for (let j=0; j<condition.countsByIndex[i]; j++) indices.push(i);
+    }
+    indices = random.shuffle(indices)();
+    
+    let locations = svg.querySelectorAll(condition.locationSelector);
+    
+    for (let i=0; i<locations.length; i++) {
+      
+      // clear contents
+      locations[i].innerHTML = '';
+      
+      // let scaleFactor = sizePX / baseIconSize;
+      // let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
+      let scaleFactor = 1;
+      let offset = 0;
+      let iconIndex = indices.next();
+      if (!iconIndex.done) {
+        locations[i].innerHTML = '<image href="' + resource.url(condition.icons[condition.iconSet[iconIndex.value]].src) + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+      }
+    };
+  };
   
   let parent = null;
   let document = null;
   
-  return {
-    initialize: function(_parent) {
-      parent = _parent;
-      document = parent.ownerDocument;
-    },
+  let renderer = function(context) {
     
-    render: function(condition) {
+    let display = displayConfig(Object.assign({}, options, {
+      warnDefaults: options.warn
+    }))(context);
+
+    return {
+      initialize: function(_parent) {
+        parent = _parent;
+        document = parent.ownerDocument;
+      },
       
-      let svg = document.createElement("object");
-      
-      svg.width = condition.width;
-      svg.height = condition.height;
-      svg.data = condition.svg;
-      
-      svg.addEventListener("load", e => {
-        options.augmentSVG(svg.getSVGDocument(), condition);
-      });
-      
-      parent.innerHTML = "";    
-      parent.appendChild(svg);
+      render: function(condition) {
+        
+        let svg = document.createElement("object");
+        
+        for (let key of options.dimensions) {
+          condition[key] = display.dimensionToScreenPixels(condition[key], condition);
+        }
+
+        svg.width = condition.width;
+        svg.height = condition.height;
+        svg.data = resource.url(condition.svg);
+        
+        svg.addEventListener("load", e => {
+          augmentSVG(svg.getSVGDocument(), condition);
+        });
+        
+        parent.innerHTML = "";    
+        parent.appendChild(svg);
+      }
     }
   }
+  
+  return renderer;
   
 }
 
@@ -70,6 +115,7 @@ let buttons = config => htmlButtons({
 
 const task = simpleTask({
   defaults: DEFAULTS, 
+  //staticOptions: ["augmentSVG"],
   // The interfaces the task provides.
   // These can be remapped by the user with the "<interfaceName>Interface" configuration properties.
   interfaces: {

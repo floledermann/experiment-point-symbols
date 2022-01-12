@@ -16,7 +16,7 @@ const resource = require("stimsrv/util/resource");
 const htmlButtons = require("stimsrv/ui/htmlButtons");
 
 const iconTask = require("./tasks/iconTask.js");
-const svgTask = require("./tasks/augmentedSVGTask.js");
+const augmentedSVGTask = require("./tasks/augmentedSVGTask.js");
 //const dashedline = require("./tasks/dashedline.js");
 
 const setup = require("./setup-lab.js");
@@ -259,6 +259,8 @@ module.exports = {
         }),
 */
         // Icon task with real icons
+        
+/*
         () => {
           
           let icons = {
@@ -300,7 +302,8 @@ module.exports = {
             `
           })
         },
-        
+*/
+       
         // TODO: Icon task with/without antialiasing
         
         // TODO: Subjective judgement of shape distortion without antialiasing
@@ -324,10 +327,10 @@ module.exports = {
           
           // icons ordered by similarity
           let iconSet = random.pick([
-            "a,b,c,d".split(","),
-            "b,a,c,d".split(","),
-            "c,d,b,a".split(","),
-            "d,c,a,b".split(",")
+            [0,1,2,3],
+            [1,0,2,3],
+            [2,3,1,0],
+            [3,2,0,1]
           ]);
           
           // first icon is target, count 2-7
@@ -341,32 +344,15 @@ module.exports = {
             [6,3,2,1],
             [7,3,1,1]
           ]);
-          
-          let locationSelector = 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]';
-          
+                    
           return augmentedSVGTask({
             svg: random.shuffle(baseMaps, {loop: true}),
             width: "50mm",
             height: "50mm",
-            augmentSVG: (svg, condition) => {
-              let indices = [];
-              for (let i=0; i<condition.countsByIndex.length; i++) {
-                for (let j=0; j<condition.countsByIndex[i]; j++) indices.push(i);
-              }
-              indices = random.shuffle(indices)();
-              
-              let locations = svg.querySelectorAll(locationSelector);
-              
-              for (let i=0; i<locations.length; i++) {
-                // let scaleFactor = sizePX / baseIconSize;
-                // let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
-                let scaleFactor = 1;
-                let offset = 0;
-                let iconIndex = indices.next();
-                location.innerHTML = '<image href="' + condition.iconSet[iconIndex] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
-              };
-            },
             countsByIndex: countsByIndex,
+            icons: icons,
+            iconSet: iconSet,
+            locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
             iconSize: staircase({
               startValue: "5.5mm",
               stepType: "linear",
@@ -384,7 +370,7 @@ module.exports = {
               })
             },
             resources: [
-              "resources/svg_maps/",
+              "resources/basemaps/",
               "resources/icons"
             ]
           });
