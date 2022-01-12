@@ -37,7 +37,7 @@ function svgRenderer(options) {
       
       // let scaleFactor = sizePX / baseIconSize;
       // let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
-      let scaleFactor = condition.iconSize * condition.iconScaleFactor;
+      let scaleFactor = condition.iconSize * condition.iconScaleFactor / condition.width;
       let offset = 15 / 2;
       let iconIndex = indices.next();
       if (!iconIndex.done) {

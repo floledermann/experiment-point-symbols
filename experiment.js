@@ -347,21 +347,21 @@ module.exports = {
                     
           return augmentedSVGTask({
             svg: random.shuffle(baseMaps, {loop: true}),
-            width: "50mm",
-            height: "50mm",
+            width: "60mm",
+            height: "60mm",
             countsByIndex: countsByIndex,
             icons: icons,
             iconSet: iconSet,
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
             iconSize: staircase({
-              startValue: "2mm",
+              startValue: "2.5mm",
               stepType: "linear",
               stepSize: 0.1,
               stepSizeFine: 0.05,
               numReversalsFine: 3,
               minReversals: context => context.minReversals,
             }),
-            iconScaleFactor: 0.41,
+            iconScaleFactor: 77,
             // static configuration
             dimensions: "iconSize",
             interfaces: {
