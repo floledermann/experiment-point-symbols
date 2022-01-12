@@ -313,14 +313,15 @@ module.exports = {
         
         () => {
         
-          let baseMaps = "map1,map2".split(",").map(f => "resources/svg_maps/" + f + ".svg");
+          let baseMaps = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");
           
           let icons = [
-            { src: "", title: "Foo" },
-            { src: "", title: "Foo" },
-            { src: "", title: "Foo" },
-            { src: "", title: "Foo" },
-          ];
+            ["maki/beer", "Beer Garden"],
+            ["maki/cemetery", "Cemetery"],
+            ["maki/charging-station", "Charging Station"],
+            ["maki/fuel", "Petrol Station"],
+          ].map(([s,t]) => ({src: "resources/icons/" + s + ".svg", title: t}));
+          
           // icons ordered by similarity
           let iconSet = random.pick([
             "a,b,c,d".split(","),
@@ -341,28 +342,37 @@ module.exports = {
             [7,3,1,1]
           ]);
           
+          let locationSelector = 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]';
+          
           return augmentedSVGTask({
             svg: random.shuffle(baseMaps, {loop: true}),
-            locations: "#positions > g",
-            augmentLocation: context => condition => {
+            width: "50mm",
+            height: "50mm",
+            augmentSVG: (svg, condition) => {
               let indices = [];
               for (let i=0; i<condition.countsByIndex.length; i++) {
                 for (let j=0; j<condition.countsByIndex[i]; j++) indices.push(i);
               }
               indices = random.shuffle(indices)();
-              return (location, index, locations) => {
+              
+              let locations = svg.querySelectorAll(locationSelector);
+              
+              for (let i=0; i<locations.length; i++) {
                 // let scaleFactor = sizePX / baseIconSize;
                 // let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
+                let scaleFactor = 1;
+                let offset = 0;
                 let iconIndex = indices.next();
                 location.innerHTML = '<image href="' + condition.iconSet[iconIndex] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
               };
             },
+            countsByIndex: countsByIndex,
             iconSize: staircase({
               startValue: "5.5mm",
+              stepType: "linear",
               stepSize: 0.1,
               stepSizeFine: 0.05,
               numReversalsFine: 3,
-              stepType: "linear",
               minReversals: context => context.minReversals,
             }),
             // static configuration
