@@ -354,13 +354,14 @@ module.exports = {
             iconSet: iconSet,
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
             iconSize: staircase({
-              startValue: "5.5mm",
+              startValue: "2mm",
               stepType: "linear",
               stepSize: 0.1,
               stepSizeFine: 0.05,
               numReversalsFine: 3,
               minReversals: context => context.minReversals,
             }),
+            iconScaleFactor: 0.41,
             // static configuration
             dimensions: "iconSize",
             interfaces: {

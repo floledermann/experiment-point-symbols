@@ -8,7 +8,8 @@ const random = require("stimsrv/controller/random");
 const DEFAULTS = {
   name: "SVG",
   description: "Display a SVG-based stimulus",
-  choices: [{label: "Continue"}]
+  choices: [{label: "Continue"}],
+  iconScaleFactor: 1
 };
 
 function svgRenderer(options) {
@@ -32,12 +33,12 @@ function svgRenderer(options) {
     for (let i=0; i<locations.length; i++) {
       
       // clear contents
-      locations[i].innerHTML = '';
+      //locations[i].innerHTML = '';
       
       // let scaleFactor = sizePX / baseIconSize;
       // let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
-      let scaleFactor = 1;
-      let offset = 0;
+      let scaleFactor = condition.iconSize * condition.iconScaleFactor;
+      let offset = 15 / 2;
       let iconIndex = indices.next();
       if (!iconIndex.done) {
         locations[i].innerHTML = '<image href="' + resource.url(condition.icons[condition.iconSet[iconIndex.value]].src) + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
@@ -88,7 +89,7 @@ function svgRenderer(options) {
 
 
 let renderer = config => svgRenderer({
-  dimensions: ["size"]
+  dimensions: ["iconSize"]
 });
 
 let buttonRenderer = config => canvasRenderer(renderIcon, {
