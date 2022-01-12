@@ -319,11 +319,12 @@ module.exports = {
           let baseMaps = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");
           
           let icons = [
-            ["maki/beer", "Beer Garden"],
-            ["maki/cemetery", "Cemetery"],
-            ["maki/charging-station", "Charging Station"],
-            ["maki/fuel", "Petrol Station"],
-          ].map(([s,t]) => ({src: "resources/icons/" + s + ".svg", title: t}));
+            // icon              // title           // similars
+            ["beer",             "Beer Garden",     "cemetery,charging-station,fuel"],
+            ["cemetery",         "Cemetery"],
+            ["charging-station", "Charging Station"],
+            ["fuel",             "Petrol Station"],
+          ].map(([i,t]) => ({src: "resources/icons/maki/" + i + ".svg", title: t}));
           
           // icons ordered by similarity
           let iconSet = random.pick([
@@ -346,15 +347,16 @@ module.exports = {
           ]);
                     
           return augmentedSVGTask({
+            name: "SVG-Basemap",
             svg: random.shuffle(baseMaps, {loop: true}),
-            width: "60mm",
-            height: "60mm",
+            width: "80mm",
+            height: "80mm",
             countsByIndex: countsByIndex,
             icons: icons,
             iconSet: iconSet,
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
             iconSize: staircase({
-              startValue: "2.5mm",
+              startValue: "2mm",
               stepType: "linear",
               stepSize: 0.1,
               stepSizeFine: 0.05,
@@ -363,9 +365,17 @@ module.exports = {
             }),
             iconScaleFactor: 77,
             // static configuration
+            transformCondition: context => condition => {
+              console.log(condition.countsByIndex);
+              let indices = [];
+              for (let i=0; i<condition.countsByIndex.length; i++) {
+                for (let j=0; j<condition.countsByIndex[i]; j++) indices.push(i);
+              }
+              condition.indices = Array.from(random.shuffle(indices)());
+            },
             dimensions: "iconSize",
             interfaces: {
-              response: config => context => htmlButtons({
+              response: config => htmlButtons({
                 header: condition => '<h1>Count the number of<br><img src="' + condition.iconSet[0].src + '"> ' + condition.title + '</h1>',
                 buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
               })

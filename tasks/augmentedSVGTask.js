@@ -9,7 +9,8 @@ const DEFAULTS = {
   name: "SVG",
   description: "Display a SVG-based stimulus",
   choices: [{label: "Continue"}],
-  iconScaleFactor: 1
+  iconScaleFactor: 1,
+  basemap: true
 };
 
 function svgRenderer(options) {
@@ -22,26 +23,34 @@ function svgRenderer(options) {
   options.dimensions = options.dimensions.concat(options.defaultDimensions);
   
   function augmentSVG(svg, condition, context) {
-    let indices = [];
-    for (let i=0; i<condition.countsByIndex.length; i++) {
-      for (let j=0; j<condition.countsByIndex[i]; j++) indices.push(i);
+     
+    if (!condition.basemap) {
+      svg.rootElement.style.backgroundColor = "#ffffff";
+      let layers = svg.querySelectorAll('svg > g');
+      console.log(layers.length);
+      for (let l of layers) {
+        if (l.getAttribute("id") != "map: multipoint_rural") l.parentElement.removeChild(l);
+      }
     }
-    indices = random.shuffle(indices)();
+
+    // TODO: figure out scale factor automatically
+    // but manual override may be necessary, in case icon anchor is inside
+    // a transformation (e.g. from QGIS)
+    
+    //let unitsPerPixel = svg.rootElement.viewBox.baseVal.width / condition.width;
     
     let locations = svg.querySelectorAll(condition.locationSelector);
     
     for (let i=0; i<locations.length; i++) {
       
       // clear contents
-      //locations[i].innerHTML = '';
+      locations[i].innerHTML = '';
       
-      // let scaleFactor = sizePX / baseIconSize;
-      // let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
       let scaleFactor = condition.iconSize * condition.iconScaleFactor / condition.width;
       let offset = 15 / 2;
-      let iconIndex = indices.next();
-      if (!iconIndex.done) {
-        locations[i].innerHTML = '<image href="' + resource.url(condition.icons[condition.iconSet[iconIndex.value]].src) + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+
+      if (i < condition.indices.length) {
+        locations[i].innerHTML = '<image href="' + resource.url(condition.icons[condition.iconSet[condition.indices[i]]].src) + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
       }
     };
   };
@@ -104,13 +113,12 @@ let buttonRenderer = config => canvasRenderer(renderIcon, {
 });
 
 let buttons = config => htmlButtons({
-  buttons: condition => condition.choices.map(
-    choice => ({
-      label: choice.label,
-      response: choice.response || choice,
-      subUI: buttonRenderer(config)
+  buttons: condition => ([0,1,2,3,4,5,6,7,8,9,10,11,12].map(
+    num => ({
+      label: num,
+      response: { count: num }
     })
-  )
+  ))
 });
 
 
