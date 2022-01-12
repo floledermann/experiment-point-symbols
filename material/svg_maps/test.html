@@ -7,14 +7,15 @@
 let svgImg = document.createElement("object");
 document.body.appendChild(svgImg);
 
-let pixelWidth = 500;
+let pixelWidth = 300;
 let resPPI = 96;
 let sizeMM = 4;
 let baseIconSize = 15;
 
 svgImg.type = "image/svg+xml";
-svgImg.data = "map1_inkscape.svg";
-svgImg.style.width = pixelWidth + "px";
+svgImg.data = "map1.svg";
+//svgImg.style.width = pixelWidth + "px";
+svgImg.width = pixelWidth;
 
 svgImg.addEventListener("load", e => {
   //let icons = "airport,airfield,bar,hospital".split(",").map(f => "icons/"+f+".svg");
@@ -24,9 +25,14 @@ svgImg.addEventListener("load", e => {
   let scaleFactor = sizePX / baseIconSize;
   let offset = baseIconSize * 2 * pixelWidth / 1000 / 2; /// scaleFactor;
   
-  for (let i=1; i<17; i++) {
-    let g = svg.getElementById("position"+i);
-    g.innerHTML = '<image href="' + icons[Math.floor(Math.random()*icons.length)] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+  let positions = svg.querySelectorAll('g[id="map: multipoint_rural"] > g[fill="#ff0707"]');
+  
+  console.log(positions);
+  
+  for (let i=0; i<positions.length; i++) {
+    //let g = svg.getElementById("position"+i);
+    let g = positions[i];
+    //g.innerHTML = '<image href="' + icons[Math.floor(Math.random()*icons.length)] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
   }
 });
 
