@@ -318,23 +318,26 @@ module.exports = {
         
           let baseMaps = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");
           
-          let icons = [
-            // icon              // title           // similars
-            ["beer",             "Beer Garden",     "cemetery,charging-station,fuel"],
-            ["cemetery",         "Cemetery"],
-            ["charging-station", "Charging Station"],
-            ["fuel",             "Petrol Station"],
-          ].map(([i,t]) => ({src: "resources/icons/maki/" + i + ".svg", title: t}));
+          let iconData = [
+            // icon                   // title             // similars
+            /*
+            ["maki/beer",             "Beer Garden",      "cemetery,charging-station,fuel"],
+            ["maki/charging-station", "Charging Station", "fuel,cemetery,beer"],
+            ["maki/fuel",             "Petrol Station",   "charging-station,cemetery,beer"],
+            ["maki/cemetery",         "Cemetery",         "beer,charging-station,fuel"],
+            */
+            ["maki/cemetery",         "Cemetery",         "elevator,waste-basket,prison"],
+            ["maki/prison",           "Prison",           "elevator,cemetery,waste-basket"],
+            ["maki/elevator",         "Elevator",         "prison,cemetery,waste-basket"],
+            ["maki/waste-basket",     "Waste Basket",     "cemetery,elevator,prison"],
+          ].map(([i,t,s]) => ({
+            icon: i,
+            set: i.split("/")[0],
+            title: t,
+            similars: s.split(",")
+          }));
           
-          // icons ordered by similarity
-          let iconSet = random.pick([
-            [0,1,2,3],
-            [1,0,2,3],
-            [2,3,1,0],
-            [3,2,0,1]
-          ]);
-          
-          // first icon is target, count 2-7
+          // first icon is target, count 2-8
           // of remaining spaces, use half (rounded up) for next, recursively
           // (based on 12 spots)
           let countsByIndex = random.pick([
@@ -343,7 +346,8 @@ module.exports = {
             [4,4,2,2],
             [5,4,2,1],
             [6,3,2,1],
-            [7,3,1,1]
+            [7,3,1,1],
+            [8,2,1,1]
           ]);
                     
           return augmentedSVGTask({
@@ -352,17 +356,22 @@ module.exports = {
             width: "80mm",
             height: "80mm",
             countsByIndex: countsByIndex,
-            icons: icons,
-            iconSet: iconSet,
+            iconData: random.pick(iconData),
+            iconBaseURL: resource.url("resources/icons/"),
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
+            baseMap: sequence.loop([true, false]),
+            // maybe do a coarse pass, store result in context and do a fine pass next
+            iconSize: sequence(["3mm","2.5mm","2mm","1.5mm","1mm"], {stepCount: 4 }),
+            /*
             iconSize: staircase({
-              startValue: "2mm",
+              startValue: "3mm",
               stepType: "linear",
               stepSize: 0.1,
               stepSizeFine: 0.05,
               numReversalsFine: 3,
               minReversals: context => context.minReversals,
-            }),
+              isResponseCorrect: context => (cond, resp) => cond.countsByIndex[0] == +resp.label
+            }),*/
             iconScaleFactor: 77,
             // static configuration
             transformCondition: context => condition => {
@@ -376,7 +385,18 @@ module.exports = {
             dimensions: "iconSize",
             interfaces: {
               response: config => htmlButtons({
-                header: condition => '<h1>Count the number of<br><img src="' + condition.iconSet[0].src + '"> ' + condition.title + '</h1>',
+                header: cond => {
+                  let legendHTML = `<div><img src="${cond.iconBaseURL + cond.iconData.icon}.svg" width="20" height="20"> ${cond.iconData.title}</div>`;
+                  for (let sim of cond.iconData.similars) {
+                    let key = cond.iconData.set + "/" + sim;
+                    let entry = iconData.find(e => e.icon == key);
+                    legendHTML += `<div><img src="${cond.iconBaseURL + entry.icon}.svg" width="20" height="20"> ${entry.title}</div>`;
+                  }
+                  return `<h1>Count the number of:<br>
+                          <img src="${cond.iconBaseURL + cond.iconData.icon}.svg" width="30" height="30">
+                          ${cond.iconData.title}</h1>
+                          <div class="legend">${legendHTML}</div>`
+                },
                 buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
               })
             },

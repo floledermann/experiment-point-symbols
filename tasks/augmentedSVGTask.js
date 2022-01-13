@@ -10,7 +10,7 @@ const DEFAULTS = {
   description: "Display a SVG-based stimulus",
   choices: [{label: "Continue"}],
   iconScaleFactor: 1,
-  basemap: true
+  baseMap: true
 };
 
 function svgRenderer(options) {
@@ -24,7 +24,7 @@ function svgRenderer(options) {
   
   function augmentSVG(svg, condition, context) {
      
-    if (!condition.basemap) {
+    if (!condition.baseMap) {
       svg.rootElement.style.backgroundColor = "#ffffff";
       let layers = svg.querySelectorAll('svg > g');
       console.log(layers.length);
@@ -41,6 +41,10 @@ function svgRenderer(options) {
     
     let locations = svg.querySelectorAll(condition.locationSelector);
     
+    let icon = condition.iconData;
+    let u = condition.iconBaseURL;
+    let iconURLs = [u+icon.icon+".svg"].concat(icon.similars.map(i => u+icon.set+"/"+i+".svg"));
+    
     for (let i=0; i<locations.length; i++) {
       
       // clear contents
@@ -50,7 +54,7 @@ function svgRenderer(options) {
       let offset = 15 / 2;
 
       if (i < condition.indices.length) {
-        locations[i].innerHTML = '<image href="' + resource.url(condition.icons[condition.iconSet[condition.indices[i]]].src) + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+        locations[i].innerHTML = '<image href="' + iconURLs[condition.indices[i]] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
       }
     };
   };
@@ -118,7 +122,8 @@ let buttons = config => htmlButtons({
       label: num,
       response: { count: num }
     })
-  ))
+  )),
+  header: condition => condition.iconData.title
 });
 
 
