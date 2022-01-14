@@ -330,6 +330,11 @@ module.exports = {
             ["maki/prison",           "Prison",           "elevator,cemetery,waste-basket"],
             ["maki/elevator",         "Elevator",         "prison,cemetery,waste-basket"],
             ["maki/waste-basket",     "Waste Basket",     "cemetery,elevator,prison"],
+            ["osm/bird_hide",         "Bird Watching Space", "castle,fortress,fort,city_gate"],
+            ["osm/castle",            "Castle",              "fortress,bird_hide,fort,city_gate"],
+            ["osm/city_gate",         "City Gate",           "fortress,castle,fort,bird_hide"],
+            ["osm/fort",              "Fort",                "bird_hide,fortress,castle,city_gate"],
+            ["osm/fortress",          "Fortress",            "castle,bird_hide,fort,city_gate"],
           ].map(([i,t,s]) => ({
             icon: i,
             set: i.split("/")[0],
