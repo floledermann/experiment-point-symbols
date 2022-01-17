@@ -32,6 +32,8 @@ htmlButtons.defaults({
   clickSound: "/static/resource/resources/sound/click1.wav"
 });
 
+
+
 // stimsrv experiment definition
 module.exports = {
   
@@ -200,7 +202,7 @@ module.exports = {
       context: {
         //targetStation: random.sequence(["A","B","C"]),
         targetStation: sequence(["A","B","C"]),
-        minReversals: 5,
+        minReversals: 2, // 5
       },
       
       tasks: [
@@ -259,8 +261,8 @@ module.exports = {
         }),
 */
         // Icon task with real icons
-        
-/*
+        /*
+
         () => {
           
           let icons = {
@@ -273,8 +275,8 @@ module.exports = {
           
           return iconTask({
             name: "icon_sets",
-            //icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
-            icon: sequence(Object.values(icons), { loop: true, stepCount: 4, preventContinuation: true }),
+            icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
+            //icon: sequence(Object.values(icons), { loop: true, stepCount: 4, preventContinuation: true }),
             baseURL: resource.url("resources/icons/maki/"),
             size: staircase({
               startValue: "5.5mm",
@@ -285,7 +287,7 @@ module.exports = {
               minReversals: context => context.minReversals,
             }),
             scaleFactor: 1/15,
-            threshold: sequence([0,180], {loop: true}),
+            threshold: 0,
             choices: choices,
             buttonCondition: { size: "8mm", threshold: false },
             resources: "resources/icons/maki",
@@ -302,9 +304,64 @@ module.exports = {
             `
           })
         },
-*/
+
        
-        // TODO: Icon task with/without antialiasing
+        () => {
+          
+          let icons = {
+            "Beer": "beer.svg",
+            "Cemetery": "cemetery.svg",
+            "Charging Station": "charging-station.svg"
+          };
+          
+          let choices = Object.entries(icons).map(([k,v]) => ({label: k, icon: v, response: {icon: v}}));
+          
+          return iconTask({
+            name: "icon_sets",
+            icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
+            //icon: sequence(Object.values(icons), { loop: true, stepCount: 4, preventContinuation: true }),
+            baseURL: resource.url("resources/icons/maki/"),
+            size: staircase({
+              startValue: "5.5mm",
+              stepSize: 0.1,
+              stepSizeFine: 0.05,
+              numReversalsFine: 3,
+              stepType: "linear",
+              minReversals: context => context.minReversals,
+            }),
+            scaleFactor: 1/15,
+            threshold: 128,
+            choices: choices,
+            buttonCondition: { size: "8mm", threshold: false },
+            resources: "resources/icons/maki",
+            interfaces: {
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
+            },
+            css: `
+              .has-ui-response .buttons button {
+                height: 5.8em;
+              }
+              .has-ui-response .buttons button .label {
+                height: 2em;
+              }
+            `
+          })
+        },
+
+*/
+
+        () => {
+          let sizes = [6,7,8,9,10,11,12,13,14,15];
+          
+          return imageTask({
+            resources: [
+              "resources/icons_hinted"
+            ]
+           
+          });
+        },
+        
+        // TODO: Icon task with hinting
         
         // TODO: Subjective judgement of shape distortion without antialiasing
         
@@ -319,48 +376,46 @@ module.exports = {
           let baseMaps = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");
           
           let iconData = [
-            // icon                   // title             // similars
+            // icon                   //size  // title             // similars
             /*
-            ["maki/beer",             "Beer Garden",      "cemetery,charging-station,fuel"],
-            ["maki/charging-station", "Charging Station", "fuel,cemetery,beer"],
-            ["maki/fuel",             "Petrol Station",   "charging-station,cemetery,beer"],
-            ["maki/cemetery",         "Cemetery",         "beer,charging-station,fuel"],
+            ["maki/beer",             15,     "Beer Garden",      "cemetery,charging-station,fuel"],
+            ["maki/charging-station", 15,     "Charging Station", "fuel,cemetery,beer"],
+            ["maki/fuel",             15,     "Petrol Station",   "charging-station,cemetery,beer"],
+            ["maki/cemetery",         15,     "Cemetery",         "beer,charging-station,fuel"],
             */
-            ["maki/cemetery",         "Cemetery",         "elevator,waste-basket,prison"],
-            ["maki/prison",           "Prison",           "elevator,cemetery,waste-basket"],
-            ["maki/elevator",         "Elevator",         "prison,cemetery,waste-basket"],
-            ["maki/waste-basket",     "Waste Basket",     "cemetery,elevator,prison"],
-            ["osm/bird_hide",         "Bird Watching Space", "castle,fortress,fort,city_gate"],
-            ["osm/castle",            "Castle",              "fortress,bird_hide,fort,city_gate"],
-            ["osm/city_gate",         "City Gate",           "fortress,castle,fort,bird_hide"],
-            ["osm/fort",              "Fort",                "bird_hide,fortress,castle,city_gate"],
-            ["osm/fortress",          "Fortress",            "castle,bird_hide,fort,city_gate"],
-          ].map(([i,t,s]) => ({
+
+            ["maki/cemetery",         15,     "Cemetery",         "elevator,waste-basket,prison"],
+            ["maki/prison",           15,     "Prison",           "elevator,cemetery,waste-basket"],
+            ["maki/elevator",         15,     "Elevator",         "prison,cemetery,waste-basket"],
+            ["maki/waste-basket",     15,     "Waste Basket",     "cemetery,elevator,prison"],
+            
+            ["osm/bird_hide",         14,     "Bird Watching Space", "castle,fortress,fort,city_gate"],
+            ["osm/castle",            14,     "Castle",              "fortress,bird_hide,fort,city_gate"],
+            ["osm/city_gate",         14,     "City Gate",           "fortress,castle,fort,bird_hide"],
+            ["osm/fort",              14,     "Fort",                "bird_hide,fortress,castle,city_gate"],
+            ["osm/fortress",          14,     "Fortress",            "castle,bird_hide,fort,city_gate"],
+
+            ["maki/airfield",         15,     "Model Airplane Shop",  "furniture,airport,hospital"],
+            ["maki/airport",          15,     "Airport",              "hospital,airfield,furniture"],
+            ["maki/hospital",         15,     "Hospital",             "airport,airfield,furniture"],
+            ["maki/furniture",        15,     "Furniture Shop",       "airfield,hospital,airport"],
+            
+            
+          ].map(([i,s,t,sim]) => ({
             icon: i,
             set: i.split("/")[0],
+            baseSize: s,
             title: t,
-            similars: s.split(",")
+            similars: sim.split(",")
           }));
-          
-          // first icon is target, count 2-8
-          // of remaining spaces, use half (rounded up) for next, recursively
-          // (based on 12 spots)
-          let countsByIndex = random.pick([
-            [2,5,3,2],
-            [3,5,2,2],
-            [4,4,2,2],
-            [5,4,2,1],
-            [6,3,2,1],
-            [7,3,1,1],
-            [8,2,1,1]
-          ]);
                     
           return augmentedSVGTask({
             name: "SVG-Basemap",
             svg: random.shuffle(baseMaps, {loop: true}),
             width: "80mm",
             height: "80mm",
-            countsByIndex: countsByIndex,
+            //countsByIndex: countsByIndex,
+            count: random.pick([2,3,4,5,6]),
             iconData: random.pick(iconData),
             iconBaseURL: resource.url("resources/icons/"),
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
@@ -380,10 +435,23 @@ module.exports = {
             iconScaleFactor: 77,
             // static configuration
             transformCondition: context => condition => {
-              console.log(condition.countsByIndex);
+              console.log(condition.count);
+              // first icon is target, count is given by condition
+              // of remaining spaces, use half (rounded up) for next, recursively
+              // (based on 12 spots)
+              let countsByIndex = [condition.count];
+              let remaining = 12 - condition.count;
+              for (let i=0; i<condition.iconData.similars.length-1; i++) {
+                let c = Math.ceil(remaining / 2);
+                countsByIndex.push(c);
+                remaining -= c;
+              }
+              countsByIndex.push(remaining);
+              console.log(countsByIndex);
+              
               let indices = [];
-              for (let i=0; i<condition.countsByIndex.length; i++) {
-                for (let j=0; j<condition.countsByIndex[i]; j++) indices.push(i);
+              for (let i=0; i<countsByIndex.length; i++) {
+                for (let j=0; j<countsByIndex[i]; j++) indices.push(i);
               }
               condition.indices = Array.from(random.shuffle(indices)());
             },

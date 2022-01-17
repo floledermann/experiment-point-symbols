@@ -54,7 +54,7 @@ function svgRenderer(options) {
       let offset = 15 / 2;
 
       if (i < condition.indices.length) {
-        locations[i].innerHTML = '<image href="' + iconURLs[condition.indices[i]] + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+        locations[i].innerHTML = '<image href="' + iconURLs[condition.indices[i]] + '" width="' + icon.baseSize + '" height="' + icon.baseSize + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
       }
     };
   };
