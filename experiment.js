@@ -1,5 +1,6 @@
 
 const tumblingE = require("stimsrv/task/tumblingE");
+const imageTask = require("stimsrv/task/image");
 
 const pause = require("stimsrv/task/pause");
 const loop = require("stimsrv/task/loop");
@@ -349,19 +350,27 @@ module.exports = {
         },
 
 */
+        // Icon task with hinting
 
         () => {
           let sizes = [6,7,8,9,10,11,12,13,14,15];
+          let icons = ["charging-station"];
           
           return imageTask({
+            icon: random.pick(icons),
+            size: sequence(sizes),
+            //image: "charging-station_15.png",
+            background: "#ffffff",
+            baseURL: resource.url("resources/icons_hinted/"),
+            transformCondition: context => cond => {
+              cond.image = cond.icon + "_" + cond.size + ".png";
+            },
             resources: [
               "resources/icons_hinted"
             ]
-           
           });
         },
         
-        // TODO: Icon task with hinting
         
         // TODO: Subjective judgement of shape distortion without antialiasing
         
