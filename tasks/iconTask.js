@@ -9,6 +9,7 @@ const DEFAULTS = {
   size: "5mm",
   backgroundIntensity: 1.0,
   foregroundIntensity: 0.0,
+  pixelAlign: false,
   choices: [{label: "Continue"}]
 };
 
@@ -36,9 +37,18 @@ function renderIcon(ctx, condition) {
     
     let w = img.width * scale,
         h = img.height * scale;
-        
-    ctx.drawImage(img, -w/2, -h/2, w, h);
     
+    if (condition.offset) {
+      ctx.translate(condition.offset[0], condition.offset[1]);
+    }
+    
+    if (condition.pixelAlign) {
+      ctx.drawImage(img, Math.round(-w/2), Math.round(-h/2), w, h);
+    }
+    else {
+      ctx.drawImage(img, -w/2, -h/2, w, h);
+    }
+        
     if (condition.threshold) {
       let idata = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
       let data = idata.data;
