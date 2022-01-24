@@ -33,7 +33,66 @@ htmlButtons.defaults({
   clickSound: "/static/resource/resources/sound/click1.wav"
 });
 
+let ICON_SETS = {
+  "maki-triangular": {
+    set: "maki",
+    baseSize: 15,
+    icons: [
+      { icon: "construction", label: "Construction Site" },
+      { icon: "mountain", label: "Mountain" },
+      { icon: "place-of-worship", label: "Temple" },
+      { icon: "triangle", label: "Triangle" },
+      { icon: "volcano", label: "Volcano" },
+    ]
+  },
+  "maki-rectangular": {
+    set: "maki",
+    baseSize: 15,
+    icons: [
+      { icon: "cemetery", label: "Cemetery" },
+      { icon: "charging-station", label: "Charging Station" },
+      { icon: "elevator", label: "Elevator" },
+      { icon: "fuel", label: "Petrol Station" },
+      { icon: "waste-basket", label: "Waste Basket" },
+    ]
+  },
+  "nps-vertical": {
+    set: "nps",
+    baseSize: 22,
+    icons: [
+      { icon: "mens-restroom", label: "Men's Restroom" },
+      { icon: "monument", label: "Monument" },
+      { icon: "statue", label: "Statue" },
+      { icon: "wilderness", label: "Large Tree" },
+      { icon: "womens-restroom", label: "Women's Restroom" },
+    ]
+  },
+  "osm-castles": {
+    set: "osm",
+    baseSize: 14,
+    icons: [
+      { icon: "castle", label: "Castle" },
+      { icon: "city_gate", label: "City Gate" },
+      { icon: "fort", label: "Fort" },
+      { icon: "fortress", label: "Fortress" },
+      { icon: "palace", label: "Palace" },
+    ]
+  },
+};
 
+Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
+  i.svg = s.set + "/" + i.icon + ".svg";
+}));
+
+// sizes in mm        
+let SIZES = [2, 1.5, 1.25, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
+
+// for debug on monitor, double size
+SIZES = SIZES.map(s => 2*s);
+
+SIZES = SIZES.map(s => s+"mm");
+
+let PIXEL_SIZES = [20,19,18,17,16,15,14,13,12,11,10,9,8,7,6].map(s => s+"px");
 
 // stimsrv experiment definition
 module.exports = {
@@ -82,6 +141,14 @@ module.exports = {
     .buttons-tao {
       display: grid;
       grid-template-columns: repeat(5, 6em);
+    }
+
+    /* buttons for icons selection - mayby define in variable and assign in each task, or add selector? */
+    .has-ui-response .buttons button {
+      height: 5.8em;
+    }
+    .has-ui-response .buttons button .label {
+      height: 2em;
     }
     
     @media (orientation: portrait) {
@@ -262,103 +329,150 @@ module.exports = {
         }),
 */
         // Icon task with real icons
-        /*
-
+/*
         () => {
           
-          let icons = {
-            "Beer": "beer.svg",
-            "Cemetery": "cemetery.svg",
-            "Charging Station": "charging-station.svg"
-          };
+          let SET = ICON_SETS["maki-rectangular"];
+          let STEP_COUNT = 4;
           
-          let choices = Object.entries(icons).map(([k,v]) => ({label: k, icon: v, response: {icon: v}}));
-          
+          // TO DO: add random offset -0.5...+0.5 px
           return iconTask({
-            name: "icon_sets",
-            icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
-            //icon: sequence(Object.values(icons), { loop: true, stepCount: 4, preventContinuation: true }),
-            baseURL: resource.url("resources/icons/maki/"),
-            size: staircase({
-              startValue: "5.5mm",
-              stepSize: 0.1,
-              stepSizeFine: 0.05,
-              numReversalsFine: 3,
-              stepType: "linear",
-              minReversals: context => context.minReversals,
-            }),
-            scaleFactor: 1/15,
-            threshold: 0,
-            choices: choices,
+            name: "icon-default-" + SET.set,
+            icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
+            size: sequence(SIZES, { stepCount: STEP_COUNT }),
+            baseURL: resource.url("resources/icons/"),
+            scaleFactor: 1/SET.baseSize,
+            threshold: null,
             buttonCondition: { size: "8mm", threshold: false },
-            resources: "resources/icons/maki",
+            resources: "resources/icons",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
             },
-            css: `
-              .has-ui-response .buttons button {
-                height: 5.8em;
-              }
-              .has-ui-response .buttons button .label {
-                height: 2em;
-              }
-            `
           })
         },
 
+        () => {
+          
+          let SET = ICON_SETS["maki-triangular"];
+          let STEP_COUNT = 4;
+          
+          return iconTask({
+            name: "icon-default-" + SET.set,
+            icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
+            size: sequence(SIZES, { stepCount: STEP_COUNT }),
+            baseURL: resource.url("resources/icons/"),
+            scaleFactor: 1/SET.baseSize,
+            threshold: null,
+            buttonCondition: { size: "8mm", threshold: false },
+            resources: "resources/icons",
+            interfaces: {
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
+            },
+          })
+        },
+
+        () => {
+          
+          let SET = ICON_SETS["nps-vertical"];
+          let STEP_COUNT = 2;
+          
+          return iconTask({
+            name: "icon-default-" + SET.set,
+            icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
+            size: sequence(SIZES, { stepCount: STEP_COUNT }),
+            baseURL: resource.url("resources/icons/"),
+            scaleFactor: 1/SET.baseSize,
+            threshold: null,
+            buttonCondition: { size: "8mm", threshold: false },
+            resources: "resources/icons",
+            interfaces: {
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
+            },
+          })
+        },
+
+        () => {
+          
+          let SET = ICON_SETS["osm-castles"];
+          let STEP_COUNT = 2;
+          
+          return iconTask({
+            name: "icon-default-" + SET.set,
+            icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
+            size: sequence(SIZES, { stepCount: STEP_COUNT }),
+            baseURL: resource.url("resources/icons/"),
+            scaleFactor: 1/SET.baseSize,
+            threshold: null,
+            buttonCondition: { size: "8mm", threshold: false },
+            resources: "resources/icons",
+            interfaces: {
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
+            },
+          })
+        },
+
+
+       // Icon task with threshold
        
         () => {
           
-          let icons = {
-            "Beer": "beer.svg",
-            "Cemetery": "cemetery.svg",
-            "Charging Station": "charging-station.svg"
-          };
-          
-          let choices = Object.entries(icons).map(([k,v]) => ({label: k, icon: v, response: {icon: v}}));
+          let SET = ICON_SETS["maki-rectangular"];
           
           return iconTask({
-            name: "icon_sets",
-            icon: random.shuffle(Object.values(icons), { loop: true, multiple: 2, preventContinuation: true }),
-            //icon: sequence(Object.values(icons), { loop: true, stepCount: 4, preventContinuation: true }),
-            baseURL: resource.url("resources/icons/maki/"),
-            size: staircase({
-              startValue: "5.5mm",
-              stepSize: 0.1,
-              stepSizeFine: 0.05,
-              numReversalsFine: 3,
-              stepType: "linear",
-              minReversals: context => context.minReversals,
-            }),
-            scaleFactor: 1/15,
+            name: "icon-threshold-" + SET.set,
+            icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
+            size: sequence(PIXEL_SIZES, { stepCount: 4 }),
+            baseURL: resource.url("resources/icons/"),
+            scaleFactor: 1/SET.baseSize,
             threshold: 128,
-            choices: choices,
             buttonCondition: { size: "8mm", threshold: false },
-            resources: "resources/icons/maki",
+            resources: "resources/icons",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
             },
-            css: `
-              .has-ui-response .buttons button {
-                height: 5.8em;
-              }
-              .has-ui-response .buttons button .label {
-                height: 2em;
-              }
-            `
           })
         },
-
 */
-        // Icon task with hinting
+        // TODO Icon task with hinting
 
         () => {
-          let sizes = [6,7,8,9,10,11,12,13,14,15];
+          
+          let SET = ICON_SETS["maki-rectangular"];
+          
+          return iconTask({
+            name: "icon-hinted-" + SET.set,
+            iconId: random.shuffle(SET.icons.map(i => i.icon), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: i.icon}})),
+            size: sequence(PIXEL_SIZES, { stepCount: 4 }),
+            baseURL: resource.url("resources/"),
+            scaleFactor: 1/SET.baseSize,
+            threshold: null,
+            buttonCondition: { size: "8mm", threshold: false },
+            transformCondition: context => condition => {
+              condition.icon = "icons_hinted/" + condition.iconId + "_" + Math.round(parseFloat(condition.size)) + ".png"
+            },
+            resources: ["resources/icons", "resources/icons_hinted"],
+            interfaces: {
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
+            },
+          })
+        },
+        
+        /* old version - delete */
+        /*
+        () => {
+          
+          let SET = ICON_SETS["maki-rectangular"];
           let icons = ["charging-station"];
           
           return imageTask({
             icon: random.pick(icons),
-            size: sequence(sizes),
+            size: sequence(PIXEL_SIZES),
             //image: "charging-station_15.png",
             background: "#ffffff",
             baseURL: resource.url("resources/icons_hinted/"),
@@ -370,13 +484,37 @@ module.exports = {
             ]
           });
         },
-        
+*/
+        // Contrast-enhanced icons
+       
+        () => {
+          
+          // TODO: show regular version on buttons
+          
+          let SET = ICON_SETS["nps-vertical"];
+          let STEP_COUNT = 2;
+          
+          return iconTask({
+            name: "icon-enhanced-" + SET.set,
+            icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
+            size: sequence(SIZES, { stepCount: STEP_COUNT }),
+            baseURL: resource.url("resources/icons_enhanced/"),
+            scaleFactor: 1/SET.baseSize,
+            threshold: null,
+            buttonCondition: { size: "8mm", threshold: false },
+            resources: "resources/icons_enhanced",
+            interfaces: {
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
+            },
+          })
+        },
         
         // TODO: Subjective judgement of shape distortion without antialiasing
         
-        // TODO: Icon task with shape contrast enhancement
-        
         // TODO: Subjective judgement of shape distortion with contrast enhancement
+        
+        // "How confident are you that the shown graphics resembles exactly the icon: "
 
         // Count icons on map
         
