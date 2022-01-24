@@ -88,7 +88,7 @@ Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
 let SIZES = [2, 1.5, 1.25, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
 
 // for debug on monitor, double size
-SIZES = SIZES.map(s => 2*s);
+//SIZES = SIZES.map(s => 2*s);
 
 SIZES = SIZES.map(s => s+"mm");
 
@@ -329,7 +329,7 @@ module.exports = {
         }),
 */
         // Icon task with real icons
-/*
+
         () => {
           
           let SET = ICON_SETS["maki-rectangular"];
@@ -341,10 +341,10 @@ module.exports = {
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
-            baseURL: resource.url("resources/icons/"),
             scaleFactor: 1/SET.baseSize,
-            threshold: null,
-            buttonCondition: { size: "8mm", threshold: false },
+            offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
+            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
@@ -362,10 +362,10 @@ module.exports = {
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
-            baseURL: resource.url("resources/icons/"),
             scaleFactor: 1/SET.baseSize,
-            threshold: null,
-            buttonCondition: { size: "8mm", threshold: false },
+            offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
+            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
@@ -383,10 +383,10 @@ module.exports = {
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
-            baseURL: resource.url("resources/icons/"),
             scaleFactor: 1/SET.baseSize,
-            threshold: null,
-            buttonCondition: { size: "8mm", threshold: false },
+            offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
+            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
@@ -404,10 +404,10 @@ module.exports = {
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
-            baseURL: resource.url("resources/icons/"),
             scaleFactor: 1/SET.baseSize,
-            threshold: null,
-            buttonCondition: { size: "8mm", threshold: false },
+            offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
+            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
@@ -416,46 +416,48 @@ module.exports = {
         },
 
 
-       // Icon task with threshold
+        // Icon task with threshold
        
         () => {
           
           let SET = ICON_SETS["maki-rectangular"];
+          let STEP_COUNT = 4;
           
           return iconTask({
             name: "icon-threshold-" + SET.set,
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
-            size: sequence(PIXEL_SIZES, { stepCount: 4 }),
-            baseURL: resource.url("resources/icons/"),
+            size: sequence(PIXEL_SIZES, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
+            pixelAlign: true,
             threshold: 128,
-            buttonCondition: { size: "8mm", threshold: false },
+            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
             },
           })
         },
-*/
-        // TODO Icon task with hinting
+
+        // Icon task with hinting
 
         () => {
           
           let SET = ICON_SETS["maki-rectangular"];
+          let STEP_COUNT = 4;
           
           return iconTask({
             name: "icon-hinted-" + SET.set,
-            iconId: random.shuffle(SET.icons.map(i => i.icon), { loop: true, preventContinuation: false }),
-            choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: i.icon}})),
-            size: sequence(PIXEL_SIZES, { stepCount: 4 }),
-            baseURL: resource.url("resources/"),
-            scaleFactor: 1/SET.baseSize,
-            threshold: null,
-            buttonCondition: { size: "8mm", threshold: false },
+            iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
+            size: sequence(PIXEL_SIZES, { stepCount: STEP_COUNT }),
+            pixelAlign: true,
+            buttonCondition: context => condition => ({ size: "8mm", icon: "icons/" + condition.iconId + ".svg" }),
             transformCondition: context => condition => {
               condition.icon = "icons_hinted/" + condition.iconId + "_" + Math.round(parseFloat(condition.size)) + ".png"
             },
+            baseURL: resource.url("resources/"),
             resources: ["resources/icons", "resources/icons_hinted"],
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
@@ -463,46 +465,25 @@ module.exports = {
           })
         },
         
-        /* old version - delete */
-        /*
-        () => {
-          
-          let SET = ICON_SETS["maki-rectangular"];
-          let icons = ["charging-station"];
-          
-          return imageTask({
-            icon: random.pick(icons),
-            size: sequence(PIXEL_SIZES),
-            //image: "charging-station_15.png",
-            background: "#ffffff",
-            baseURL: resource.url("resources/icons_hinted/"),
-            transformCondition: context => cond => {
-              cond.image = cond.icon + "_" + cond.size + ".png";
-            },
-            resources: [
-              "resources/icons_hinted"
-            ]
-          });
-        },
-*/
         // Contrast-enhanced icons
        
         () => {
-          
-          // TODO: show regular version on buttons
-          
+                    
           let SET = ICON_SETS["nps-vertical"];
-          let STEP_COUNT = 2;
+          let STEP_COUNT = 4;
           
           return iconTask({
             name: "icon-enhanced-" + SET.set,
-            icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
-            choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
+            iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
-            baseURL: resource.url("resources/icons_enhanced/"),
             scaleFactor: 1/SET.baseSize,
-            threshold: null,
-            buttonCondition: { size: "8mm", threshold: false },
+            offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
+            buttonCondition: context => condition => ({ size: "8mm", offset: null, icon: "icons/" + condition.iconId + ".svg" }),
+            transformCondition: context => condition => {
+              condition.icon = "icons_enhanced/" + condition.iconId + ".svg"
+            },
+            baseURL: resource.url("resources/"),
             resources: "resources/icons_enhanced",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
