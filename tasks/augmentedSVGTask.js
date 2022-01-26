@@ -43,7 +43,7 @@ function svgRenderer(options) {
     
     let icon = condition.iconData;
     let u = condition.iconBaseURL;
-    let iconURLs = [u+icon.icon+".svg"].concat(icon.similars.map(i => u+icon.set+"/"+i+".svg"));
+    let iconURLs = [u+icon.svg].concat(icon.similars.map(i => u+i.svg));
     
     for (let i=0; i<locations.length; i++) {
       
