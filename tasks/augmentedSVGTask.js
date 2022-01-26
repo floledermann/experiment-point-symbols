@@ -61,6 +61,7 @@ function svgRenderer(options) {
   
   let parent = null;
   let document = null;
+  let dppx = 1;
   
   let renderer = function(context) {
     
@@ -72,6 +73,7 @@ function svgRenderer(options) {
       initialize: function(_parent) {
         parent = _parent;
         document = parent.ownerDocument;
+        dppx = document.defaultView.devicePixelRatio || 1; 
       },
       
       render: function(condition) {
@@ -82,8 +84,8 @@ function svgRenderer(options) {
           condition[key] = display.dimensionToScreenPixels(condition[key], condition);
         }
 
-        svg.width = condition.width;
-        svg.height = condition.height;
+        svg.width = condition.width / dppx;
+        svg.height = condition.height / dppx;
         svg.data = resource.url(condition.svg);
         
         svg.addEventListener("load", e => {
