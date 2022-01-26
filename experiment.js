@@ -33,27 +33,30 @@ htmlButtons.defaults({
   clickSound: "/static/resource/resources/sound/click1.wav"
 });
 
+
+            
+
 let ICON_SETS = {
   "maki-triangular": {
     set: "maki",
     baseSize: 15,
     icons: [
-      { icon: "construction", label: "Construction Site" },
-      { icon: "mountain", label: "Mountain" },
-      { icon: "place-of-worship", label: "Temple" },
-      { icon: "triangle", label: "Triangle" },
-      { icon: "volcano", label: "Volcano" },
+      { icon: "construction", label: "Construction Site", similars: "mountain,triangle,place-of-worship,volcano" },
+      { icon: "mountain", label: "Mountain", similars: "triangle,construction,volcano,place-of-worship" },
+      { icon: "place-of-worship", label: "Temple", similars: "triangle,construction,mountain,volcano" },
+      { icon: "triangle", label: "Triangle", similars: "mountain,place-of-worship,construction,volcano" },
+      { icon: "volcano", label: "Volcano", plural: "Volcanoes", similars: "mountain,construction,triangle,place-of-worship" },
     ]
   },
   "maki-rectangular": {
     set: "maki",
     baseSize: 15,
     icons: [
-      { icon: "cemetery", label: "Cemetery" },
-      { icon: "charging-station", label: "Charging Station" },
-      { icon: "elevator", label: "Elevator" },
-      { icon: "fuel", label: "Petrol Station" },
-      { icon: "waste-basket", label: "Waste Basket" },
+      { icon: "cemetery", label: "Cemetery", plural: "Cemeteries", similars: "waste-basket,elevator,fuel,charging-station" },
+      { icon: "charging-station", label: "Charging Station", similars: "fuel,elevator,cemetery,waste-basket" },
+      { icon: "elevator", label: "Elevator", similars: "waste-basket,cemetery,fuel,charging-station" },
+      { icon: "fuel", label: "Petrol Station", similars: "charging-station,elevator,cemetery,waste-basket" },
+      { icon: "waste-basket", label: "Waste Basket", similars: "elevator,cemetery,charging-station,fuel" },
     ]
   },
   "nps-vertical": {
@@ -71,17 +74,30 @@ let ICON_SETS = {
     set: "osm",
     baseSize: 14,
     icons: [
-      { icon: "castle", label: "Castle" },
-      { icon: "city_gate", label: "City Gate" },
-      { icon: "fort", label: "Fort" },
-      { icon: "fortress", label: "Fortress" },
-      { icon: "palace", label: "Palace" },
+      { icon: "castle", label: "Castle", similars: "fortress,city_gate,palace,fort" },
+      { icon: "city_gate", label: "City Gate", similars: "palace,fortress,castle,fort" },
+      { icon: "fort", label: "Fort", similars: "fortress,castle,palace,city_gate" },
+      { icon: "fortress", label: "Fortress", plural: "Fortresses", similars: "castle,fort,city_gate,palace" },
+      { icon: "palace", label: "Palace", similars: "city_gate,castle,fort,fortress" },
     ]
   },
 };
 
+
 Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
   i.svg = s.set + "/" + i.icon + ".svg";
+  i.baseSize = s.baseSize;
+}));
+
+Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
+  if (i.similars) {
+    i.similars = i.similars.split(",").map(x => {
+      // clone icon and remove similars to avoid infinite tree
+      let i2 = Object.assign({}, s.icons.find(i2 => i2.icon == x));
+      i2.similars = undefined;
+      return i2;
+    });
+  }
 }));
 
 // sizes in mm        
@@ -523,11 +539,6 @@ module.exports = {
             ["osm/fort",              14,     "Fort",                "bird_hide,fortress,castle,city_gate"],
             ["osm/fortress",          14,     "Fortress",            "castle,bird_hide,fort,city_gate"],
 
-            ["maki/airfield",         15,     "Model Airplane Shop",  "furniture,airport,hospital"],
-            ["maki/airport",          15,     "Airport",              "hospital,airfield,furniture"],
-            ["maki/hospital",         15,     "Hospital",             "airport,airfield,furniture"],
-            ["maki/furniture",        15,     "Furniture Shop",       "airfield,hospital,airport"],
-            
             
           ].map(([i,s,t,sim]) => ({
             icon: i,
@@ -536,20 +547,22 @@ module.exports = {
             title: t,
             similars: sim.split(",")
           }));
+          
+          let SET = ICON_SETS["maki-triangular"];
                     
           return augmentedSVGTask({
-            name: "SVG-Basemap",
+            name: "icon-basemap-" + SET.set,
             svg: random.shuffle(baseMaps, {loop: true}),
-            width: "80mm",
-            height: "80mm",
+            width: "60mm",
+            height: "60mm",
             //countsByIndex: countsByIndex,
             count: random.pick([2,3,4,5,6]),
-            iconData: random.pick(iconData),
+            iconData: random.pick(SET.icons),
             iconBaseURL: resource.url("resources/icons/"),
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
             baseMap: sequence.loop([true, false]),
             // maybe do a coarse pass, store result in context and do a fine pass next
-            iconSize: sequence(["3mm","2.5mm","2mm","1.5mm","1mm"], {stepCount: 4 }),
+            iconSize: sequence(["2mm","1.5mm","1mm","0.8mm","0.6mm"], {stepCount: 4 }),
             /*
             iconSize: staircase({
               startValue: "3mm",
@@ -587,15 +600,13 @@ module.exports = {
             interfaces: {
               response: config => htmlButtons({
                 header: cond => {
-                  let legendHTML = `<div><img src="${cond.iconBaseURL + cond.iconData.icon}.svg" width="20" height="20"> ${cond.iconData.title}</div>`;
+                  let legendHTML = `<div><img src="${cond.iconBaseURL + cond.iconData.svg}" width="20" height="20"> ${cond.iconData.label}</div>`;
                   for (let sim of cond.iconData.similars) {
-                    let key = cond.iconData.set + "/" + sim;
-                    let entry = iconData.find(e => e.icon == key);
-                    legendHTML += `<div><img src="${cond.iconBaseURL + entry.icon}.svg" width="20" height="20"> ${entry.title}</div>`;
+                    legendHTML += `<div><img src="${cond.iconBaseURL + sim.svg}" width="20" height="20"> ${sim.label}</div>`;
                   }
                   return `<h1>Count the number of:<br>
-                          <img src="${cond.iconBaseURL + cond.iconData.icon}.svg" width="30" height="30">
-                          ${cond.iconData.title}</h1>
+                          <img src="${cond.iconBaseURL + cond.iconData.svg}" width="30" height="30">
+                          ${cond.iconData.plural || (cond.iconData.label + "s")}</h1>
                           <div class="legend">${legendHTML}</div>`
                 },
                 buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
