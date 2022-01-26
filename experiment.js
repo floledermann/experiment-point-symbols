@@ -122,6 +122,8 @@ module.exports = {
     simpleBrowserRefresh: 5
   },
   
+  serverConfigFile: "stimsrv-config.js",
+  
   storage: filestorage({
     destination: "./data"
   }),
