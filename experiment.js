@@ -312,7 +312,7 @@ module.exports = {
       },
       
       tasks: [
-/* 
+
         pause({
           message: context => {
             let msg = {
@@ -323,7 +323,7 @@ module.exports = {
             return msg;
           },
         }),  
-
+/* 
         pause({
           message: context => {
             let msg = {
@@ -346,6 +346,8 @@ module.exports = {
           },
         }),  
 */
+
+        // TO DO: only on highest resolution
 /*
         tumblingE({
           // condition
@@ -366,14 +368,14 @@ module.exports = {
           stimulusDisplay: context => "station" + context.targetStation + ".display"
         }),
 */
-        // Icon task with real icons
 
+        // Icon task with real icons
+/*
         () => {
           
           let SET = ICON_SETS["maki-rectangular"];
           let STEP_COUNT = 4;
           
-          // TO DO: add random offset -0.5...+0.5 px
           return iconTask({
             name: "icon-default-" + SET.set,
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
@@ -551,7 +553,7 @@ module.exports = {
             },
           })
         },
-        
+*/      
         // TODO: Subjective judgement of shape distortion without antialiasing
         
         // TODO: Subjective judgement of shape distortion with contrast enhancement
