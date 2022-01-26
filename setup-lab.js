@@ -28,12 +28,21 @@ module.exports = {
       pixelDensity: 403,
       viewingDistance: 350
     },
+    /*
+    {
+      name: "Station A TEST",
+      id: "stationA",
+      pixelDensity: 440,
+      viewingDistance: 308,
+      devicePixelRatio: 2.625
+//      gamma: 2.6,
+    },
+*/
     {
       name: "Station A (Sony Xperia V)",
-      id: "stationD",
+      id: "stationA",
       pixelDensity: 343,
       viewingDistance: 308,
-//      gamma: 2.2,
       client: "browser-simple",
       devicePixelRatio: 2,
       imageSize: "720x880",
@@ -42,8 +51,8 @@ module.exports = {
       name: "Station B (Sony Xperia Z5-P)",
       id: "stationB",
       pixelDensity: 807,
+      devicePixelRatio: 4,
       viewingDistance: 308,
-//      gamma: 2.2,
     },
     {
       name: "Station C (LG P-970)",
@@ -56,10 +65,9 @@ module.exports = {
     },
     {
       name: "Station D (Google Nexus 6P)",
-      id: "stationA",
+      id: "stationD",
       pixelDensity: 520,
       viewingDistance: 308,
-//      gamma: 2.6,
     },
   ],
   
