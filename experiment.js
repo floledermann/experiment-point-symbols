@@ -562,42 +562,12 @@ module.exports = {
         
         () => {
         
-          let baseMaps = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");
-          
-          let iconData = [
-            // icon                   //size  // title             // similars
-            /*
-            ["maki/beer",             15,     "Beer Garden",      "cemetery,charging-station,fuel"],
-            ["maki/charging-station", 15,     "Charging Station", "fuel,cemetery,beer"],
-            ["maki/fuel",             15,     "Petrol Station",   "charging-station,cemetery,beer"],
-            ["maki/cemetery",         15,     "Cemetery",         "beer,charging-station,fuel"],
-            */
-
-            ["maki/cemetery",         15,     "Cemetery",         "elevator,waste-basket,prison"],
-            ["maki/prison",           15,     "Prison",           "elevator,cemetery,waste-basket"],
-            ["maki/elevator",         15,     "Elevator",         "prison,cemetery,waste-basket"],
-            ["maki/waste-basket",     15,     "Waste Basket",     "cemetery,elevator,prison"],
-            
-            ["osm/bird_hide",         14,     "Bird Watching Space", "castle,fortress,fort,city_gate"],
-            ["osm/castle",            14,     "Castle",              "fortress,bird_hide,fort,city_gate"],
-            ["osm/city_gate",         14,     "City Gate",           "fortress,castle,fort,bird_hide"],
-            ["osm/fort",              14,     "Fort",                "bird_hide,fortress,castle,city_gate"],
-            ["osm/fortress",          14,     "Fortress",            "castle,bird_hide,fort,city_gate"],
-
-            
-          ].map(([i,s,t,sim]) => ({
-            icon: i,
-            set: i.split("/")[0],
-            baseSize: s,
-            title: t,
-            similars: sim.split(",")
-          }));
-          
+          let BASE_MAPS = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");       
           let SET = ICON_SETS["maki-triangular"];
                     
           return augmentedSVGTask({
             name: "icon-basemap-" + SET.set,
-            svg: random.shuffle(baseMaps, {loop: true}),
+            svg: random.shuffle(BASE_MAPS, {loop: true}),
             width: "60mm",
             height: "60mm",
             //countsByIndex: countsByIndex,
@@ -608,20 +578,10 @@ module.exports = {
             baseMap: sequence.loop([true, false]),
             // maybe do a coarse pass, store result in context and do a fine pass next
             iconSize: sequence(["2mm","1.5mm","1mm","0.8mm","0.6mm"], {stepCount: 4 }),
-            /*
-            iconSize: staircase({
-              startValue: "3mm",
-              stepType: "linear",
-              stepSize: 0.1,
-              stepSizeFine: 0.05,
-              numReversalsFine: 3,
-              minReversals: context => context.minReversals,
-              isResponseCorrect: context => (cond, resp) => cond.countsByIndex[0] == +resp.label
-            }),*/
+            // TODO: ???? is this needed?
             iconScaleFactor: 77,
             // static configuration
             transformCondition: context => condition => {
-              console.log(condition.count);
               // first icon is target, count is given by condition
               // of remaining spaces, use half (rounded up) for next, recursively
               // (based on 12 spots)
