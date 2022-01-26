@@ -163,18 +163,38 @@ module.exports = {
 
     /* buttons for icons selection - mayby define in variable and assign in each task, or add selector? */
     .has-ui-response .buttons button {
-      height: 5.8em;
+      xheight: 5.8em;
     }
     .has-ui-response .buttons button .label {
-      height: 2em;
+      xheight: 2em;
     }
     
     @media (orientation: portrait) {
       .buttons {
         display: grid;
-        grid-template-columns: repeat(1, 10em);
-        margin-top: 6em;
+        grid-template-columns: repeat(1, 12em);
+        margin-top: 2em;
+        font-size: 0.8em;
       }
+      .legend {
+        font-size: 0.8em;
+      }
+      header img {
+        vertical-align: -0.15em;
+      }
+      header h1 img {
+        vertical-align: -0.2em;
+      }
+      body[class*="current-task-icon-basemap-"] h1 {
+        font-size: 1em;
+        margin-top: 2.5em;
+      }     
+      body[class*="current-task-icon-basemap-"] .buttons {
+        grid-template-columns: repeat(3, 5em);
+        grid-template-rows: repeat(5, 3em);
+        font-size: 1em;
+      }
+      
     }
   `,
   
