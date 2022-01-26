@@ -483,6 +483,29 @@ module.exports = {
           })
         },
         
+        () => {
+          
+          let SET = ICON_SETS["maki-triangular"];
+          let STEP_COUNT = 4;
+          
+          return iconTask({
+            name: "icon-hinted-" + SET.set,
+            iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
+            choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
+            size: sequence(PIXEL_SIZES, { stepCount: STEP_COUNT }),
+            pixelAlign: true,
+            buttonCondition: context => condition => ({ size: "8mm", icon: "icons/" + condition.iconId + ".svg" }),
+            transformCondition: context => condition => {
+              condition.icon = "icons_hinted/" + condition.iconId + "_" + Math.round(parseFloat(condition.size)) + ".png"
+            },
+            baseURL: resource.url("resources/"),
+            resources: ["resources/icons", "resources/icons_hinted"],
+            interfaces: {
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
+            },
+          })
+        },
+        
         // Contrast-enhanced icons
        
         () => {
