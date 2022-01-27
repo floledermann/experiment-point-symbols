@@ -104,11 +104,61 @@ Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
 let SIZES = [2, 1.5, 1.25, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
 
 // for debug on monitor, double size
-//SIZES = SIZES.map(s => 2*s);
+SIZES = SIZES.map(s => 2*s);
 
 SIZES = SIZES.map(s => s+"mm");
 
-let PIXEL_SIZES = [20,19,18,17,16,15,14,13,12,11,10,9,8,7,6].map(s => s+"px");
+//let PIXEL_SIZES = [20,19,18,17,16,15,14,13,12,11,10,9,8,7,6].map(s => s+"px");
+
+let PIXEL_SIZES = {
+  "A": [12,10,9,8,7,6].map(s => s+"px"),
+  "B": [20,18,16,14,13,12,11,10,9,8,7,6].map(s => s+"px"),
+  "C": [20,18,17,15,14,12,11,9,8,7,6].map(s => s+"px"),
+}
+
+let MAP_SIZES = [1,2,3,5,6,7,8].map(i => SIZES[i]);
+
+// TODO check/optimize results output
+// TODO subjective tasks
+
+// helper functions for svg map task
+// calculate random indices for a given number of targetIcons, map positions and icon types
+
+// first icon is target, count is given by condition
+// of remaining spaces, use half (rounded up) for next, recursively
+function calculateCountsByIndex(firstCount, totalCount, numberOfKinds) {
+  let countsByIndex = [firstCount];
+  let remaining = totalCount - firstCount;
+  for (let i=0; i<numberOfKinds-1; i++) {
+    let c = Math.ceil(remaining / 2);
+    countsByIndex.push(c);
+    remaining -= c;
+  }
+  countsByIndex.push(remaining);
+  return countsByIndex;
+}
+
+// generate array with random indices (0..numberOfKinds-1) for the given parameters
+// according to above rules
+function randomIndices(firstCount, totalCount, numberOfKinds) {
+  let countsByIndex = calculateCountsByIndex(firstCount, totalCount, numberOfKinds);
+  let indices = [];
+  for (let i=0; i<countsByIndex.length; i++) {
+    for (let j=0; j<countsByIndex[i]; j++) indices.push(i);
+  }
+  return Array.from(random.shuffle(indices)());
+}
+
+function legendHeader(baseURL, icon) {
+  let legendHTML = `<div><img src="${baseURL + icon.svg}" width="20" height="20"> ${icon.label}</div>`;
+  for (let sim of icon.similars) {
+    legendHTML += `<div><img src="${baseURL + sim.svg}" width="20" height="20"> ${sim.label}</div>`;
+  }
+  return `<h1>Count the number of:<br>
+          <img src="${baseURL + icon.svg}" width="30" height="30">
+          ${icon.plural || (icon.label + "s")}</h1>
+          <div class="legend">${legendHTML}</div>`
+}
 
 // stimsrv experiment definition
 module.exports = {
@@ -347,8 +397,6 @@ module.exports = {
         }),  
 */
 
-        // TO DO: only on highest resolution
-/*
         tumblingE({
           // condition
           //rotate: random([-5,+5]), // add random rotation to prevent aliasing
@@ -356,21 +404,25 @@ module.exports = {
           pixelAlign: false,
           foregroundIntensity: 0,
           backgroundIntensity: 1,
-          size: staircase({
-            startValue: "1.0mm",
-            stepSize: 0.1,
-            stepSizeFine: 0.05,
-            numReversalsFine: 3,
-            stepType: "linear", 
-            minReversals: context => context.minReversals,
-          }),
+          size: context => {
+            // hack: if we are not at station A, immediately jump to next task
+            if (context.targetStation != "B") return () => null;
+            return staircase({
+              startValue: "1.0mm",
+              stepSize: 0.1,
+              stepSizeFine: 0.05,
+              numReversalsFine: 3,
+              stepType: "linear", 
+              minReversals: context => context.minReversals,
+            })(context)
+          },
           // config (static)
           stimulusDisplay: context => "station" + context.targetStation + ".display"
         }),
-*/
+
 
         // Icon task with real icons
-/*
+
         () => {
           
           let SET = ICON_SETS["maki-rectangular"];
@@ -378,7 +430,7 @@ module.exports = {
           
           return iconTask({
             name: "icon-default-" + SET.set,
-            icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
+            icon: random.shuffle(SET.icons.map(i => i.svg), { multiple: 2, loop: true, preventContinuation: true }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
@@ -491,7 +543,9 @@ module.exports = {
             name: "icon-hinted-" + SET.set,
             iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
-            size: sequence(PIXEL_SIZES, { stepCount: STEP_COUNT }),
+            size: context => {
+              return sequence(PIXEL_SIZES[context.targetStation], { stepCount: STEP_COUNT })(context)
+            },
             pixelAlign: true,
             buttonCondition: context => condition => ({ size: "8mm", icon: "icons/" + condition.iconId + ".svg" }),
             transformCondition: context => condition => {
@@ -514,7 +568,9 @@ module.exports = {
             name: "icon-hinted-" + SET.set,
             iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
-            size: sequence(PIXEL_SIZES, { stepCount: STEP_COUNT }),
+            size: context => {
+              return sequence(PIXEL_SIZES[context.targetStation], { stepCount: STEP_COUNT })(context)
+            },
             pixelAlign: true,
             buttonCondition: context => condition => ({ size: "8mm", icon: "icons/" + condition.iconId + ".svg" }),
             transformCondition: context => condition => {
@@ -553,7 +609,7 @@ module.exports = {
             },
           })
         },
-*/      
+
         // TODO: Subjective judgement of shape distortion without antialiasing
         
         // TODO: Subjective judgement of shape distortion with contrast enhancement
@@ -566,6 +622,7 @@ module.exports = {
         
           let BASE_MAPS = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");       
           let SET = ICON_SETS["maki-triangular"];
+          let STEP_COUNT = 4;
                     
           return augmentedSVGTask({
             name: "icon-basemap-" + SET.set,
@@ -577,45 +634,22 @@ module.exports = {
             iconData: random.pick(SET.icons),
             iconBaseURL: resource.url("resources/icons/"),
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
-            baseMap: sequence.loop([true, false]),
+            baseMap: random.shuffle([true, false], {loop: true}),
             // maybe do a coarse pass, store result in context and do a fine pass next
-            iconSize: sequence(["2mm","1.5mm","1mm","0.8mm","0.6mm"], {stepCount: 4 }),
+            iconSize: sequence(MAP_SIZES, {stepCount: STEP_COUNT }),
             // TODO: ???? is this needed?
             iconScaleFactor: 77,
             // static configuration
             transformCondition: context => condition => {
-              // first icon is target, count is given by condition
-              // of remaining spaces, use half (rounded up) for next, recursively
-              // (based on 12 spots)
-              let countsByIndex = [condition.count];
-              let remaining = 12 - condition.count;
-              for (let i=0; i<condition.iconData.similars.length-1; i++) {
-                let c = Math.ceil(remaining / 2);
-                countsByIndex.push(c);
-                remaining -= c;
-              }
-              countsByIndex.push(remaining);
-              console.log(countsByIndex);
-              
-              let indices = [];
-              for (let i=0; i<countsByIndex.length; i++) {
-                for (let j=0; j<countsByIndex[i]; j++) indices.push(i);
-              }
-              condition.indices = Array.from(random.shuffle(indices)());
+              // count is number of first icon, always 12 spots
+              condition.indices = randomIndices(condition.count, 12, condition.iconData.similars.length);
             },
             dimensions: "iconSize",
             interfaces: {
+              display: config => context => 
+                "station" + context.targetStation == context.role ? augmentedSVGTask.renderer(context) : null,
               response: config => htmlButtons({
-                header: cond => {
-                  let legendHTML = `<div><img src="${cond.iconBaseURL + cond.iconData.svg}" width="20" height="20"> ${cond.iconData.label}</div>`;
-                  for (let sim of cond.iconData.similars) {
-                    legendHTML += `<div><img src="${cond.iconBaseURL + sim.svg}" width="20" height="20"> ${sim.label}</div>`;
-                  }
-                  return `<h1>Count the number of:<br>
-                          <img src="${cond.iconBaseURL + cond.iconData.svg}" width="30" height="30">
-                          ${cond.iconData.plural || (cond.iconData.label + "s")}</h1>
-                          <div class="legend">${legendHTML}</div>`
-                },
+                header: cond => legendHeader(cond.iconBaseURL, cond.iconData),
                 buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
               })
             },
@@ -625,7 +659,50 @@ module.exports = {
             ]
           });
         
-        }
+        },
+        
+        () => {
+        
+          let BASE_MAPS = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");       
+          let SET = ICON_SETS["maki-rectangular"];
+          let STEP_COUNT = 4;
+                    
+          return augmentedSVGTask({
+            name: "icon-basemap-" + SET.set,
+            svg: random.shuffle(BASE_MAPS, {loop: true}),
+            width: "60mm",
+            height: "60mm",
+            //countsByIndex: countsByIndex,
+            count: random.pick([2,3,4,5,6]),
+            iconData: random.pick(SET.icons),
+            iconBaseURL: resource.url("resources/icons/"),
+            locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
+            baseMap: random.shuffle([true, false], {loop: true}),
+            // maybe do a coarse pass, store result in context and do a fine pass next
+            iconSize: sequence(MAP_SIZES, {stepCount: STEP_COUNT }),
+            // TODO: ???? is this needed?
+            iconScaleFactor: 77,
+            // static configuration
+            transformCondition: context => condition => {
+              // count is number of first icon, always 12 spots
+              condition.indices = randomIndices(condition.count, 12, condition.iconData.similars.length);
+            },
+            dimensions: "iconSize",
+            interfaces: {
+              display: config => context => 
+                "station" + context.targetStation == context.role ? augmentedSVGTask.renderer(context) : null,
+              response: config => htmlButtons({
+                header: cond => legendHeader(cond.iconBaseURL, cond.iconData),
+                buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
+              })
+            },
+            resources: [
+              "resources/basemaps/",
+              "resources/icons"
+            ]
+          });
+        
+        },
         
       ] // end of loop tasks
     }),
