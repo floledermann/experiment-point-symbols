@@ -34,7 +34,7 @@ htmlButtons.defaults({
 });
 
 
-            
+const DEBUG = true;  
 
 let ICON_SETS = {
   "maki-triangular": {
@@ -104,7 +104,7 @@ Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
 let SIZES = [2, 1.5, 1.25, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
 
 // for debug on monitor, double size
-SIZES = SIZES.map(s => 2*s);
+if (DEBUG) SIZES = SIZES.map(s => 2*s);
 
 SIZES = SIZES.map(s => s+"mm");
 
@@ -358,7 +358,6 @@ module.exports = {
       context: {
         //targetStation: random.sequence(["A","B","C"]),
         targetStation: sequence(["A","B","C"]),
-        minReversals: 2, // 5
       },
       
       tasks: [
@@ -413,7 +412,7 @@ module.exports = {
               stepSizeFine: 0.05,
               numReversalsFine: 3,
               stepType: "linear", 
-              minReversals: context => context.minReversals,
+              minReversals: DEBUG ? 2 : 5,
             })(context)
           },
           // config (static)
@@ -507,7 +506,6 @@ module.exports = {
           })
         },
 
-
         // Icon task with threshold
        
         () => {
@@ -519,7 +517,9 @@ module.exports = {
             name: "icon-threshold-" + SET.set,
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
-            size: sequence(PIXEL_SIZES, { stepCount: STEP_COUNT }),
+            size: context => {
+              return sequence(PIXEL_SIZES[context.targetStation], { stepCount: STEP_COUNT })(context)
+            },
             scaleFactor: 1/SET.baseSize,
             pixelAlign: true,
             threshold: 128,
@@ -585,7 +585,7 @@ module.exports = {
         },
         
         // Contrast-enhanced icons
-       
+        // TODO: takes too long on low resolution
         () => {
                     
           let SET = ICON_SETS["nps-vertical"];
