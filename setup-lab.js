@@ -39,35 +39,26 @@ module.exports = {
     },
 */
     {
-      name: "Station A (Sony Xperia V)",
+      name: "Station A (Galaxy Note 4)",
       id: "stationA",
-      pixelDensity: 343,
+      pixelDensity: 520,
       viewingDistance: 308,
-      client: "browser-simple",
-      devicePixelRatio: 2,
-      imageSize: "720x880",
     },
     {
       name: "Station B (Sony Xperia Z5-P)",
       id: "stationB",
       pixelDensity: 807,
-      devicePixelRatio: 4,
       viewingDistance: 308,
+      //devicePixelRatio: 4,
     },
     {
-      name: "Station C (LG P-970)",
+      name: "Station C (LG K-52)",
       id: "stationC",
-      pixelDensity: 236,
+      pixelDensity: 265,
       viewingDistance: 308,
-      client: "browser-simple",
-      devicePixelRatio: 1.5,
-      imageSize: "480x520",
-    },
-    {
-      name: "Station D (Google Nexus 6P)",
-      id: "stationD",
-      pixelDensity: 520,
-      viewingDistance: 308,
+      //client: "browser-simple",
+      //devicePixelRatio: 1.5,
+      //imageSize: "480x520",
     },
   ],
   
@@ -94,12 +85,6 @@ module.exports = {
       role: "stationC",
       description: "Station C",
       devices: ["stationC", "dev"],
-      interfaces: ["display"]
-    },
-    {
-      role: "stationD",
-      description: "Station D",
-      devices: ["stationD", "dev"],
       interfaces: ["display"]
     },
     {

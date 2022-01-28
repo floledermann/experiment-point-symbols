@@ -34,7 +34,8 @@ htmlButtons.defaults({
 });
 
 
-const DEBUG = true;  
+const DEBUG = false;  
+//DEBUG = true;
 
 let ICON_SETS = {
   "maki-triangular": {
@@ -101,8 +102,8 @@ Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
 }));
 
 // sizes in mm        
-let SIZES = [2, 1.5, 1.25, 1, 0.9, 0.8, 0.7, 0.6, 0.5];
-
+let SIZES = [1.5, 1.25, 1.0, 0.85, 0.7, 0.6, 0.5, 0.4];
+// TODO: icon size is too small! why?
 // for debug on monitor, double size
 if (DEBUG) SIZES = SIZES.map(s => 2*s);
 
@@ -111,15 +112,19 @@ SIZES = SIZES.map(s => s+"mm");
 //let PIXEL_SIZES = [20,19,18,17,16,15,14,13,12,11,10,9,8,7,6].map(s => s+"px");
 
 let PIXEL_SIZES = {
-  "A": [12,10,9,8,7,6].map(s => s+"px"),
-  "B": [20,18,16,14,13,12,11,10,9,8,7,6].map(s => s+"px"),
-  "C": [20,18,17,15,14,12,11,9,8,7,6].map(s => s+"px"),
+  "A": [20,18,16,14,13,12,11,10,9,8,7].map(s => s+"px"),
+  "B": [20,18,17,15,14,12,11].map(s => s+"px"),
+  "C": [10,9,8,7,6].map(s => s+"px"),
 }
 
-let MAP_SIZES = [1,2,3,5,6,7,8].map(i => SIZES[i]);
+let MAP_SIZES = [1.25, 0.85, 0.7, 0.6, 0.5, 0.4];
+if (DEBUG) MAP_SIZES = MAP_SIZES.map(s => 2*s);
+MAP_SIZES = MAP_SIZES.map(s => s+"mm");
 
 // TODO check/optimize results output
 // TODO subjective tasks
+// TODO auto-fullscreen on response device?
+// TODO calibrate centerpoints in lab
 
 // helper functions for svg map task
 // calculate random indices for a given number of targetIcons, map positions and icon types
@@ -357,7 +362,7 @@ module.exports = {
       
       context: {
         //targetStation: random.sequence(["A","B","C"]),
-        targetStation: sequence(["A","B","C"]),
+        targetStation: sequence(["C","B","A"]),
       },
       
       tasks: [
@@ -396,6 +401,7 @@ module.exports = {
         }),  
 */
 
+        // TODO: buttons layout
         tumblingE({
           // condition
           //rotate: random([-5,+5]), // add random rotation to prevent aliasing
@@ -418,7 +424,6 @@ module.exports = {
           // config (static)
           stimulusDisplay: context => "station" + context.targetStation + ".display"
         }),
-
 
         // Icon task with real icons
 
@@ -585,7 +590,7 @@ module.exports = {
         },
         
         // Contrast-enhanced icons
-        // TODO: takes too long on low resolution
+        // TODO: takes too long / too small sizes on low resolution
         () => {
                     
           let SET = ICON_SETS["nps-vertical"];
@@ -618,6 +623,9 @@ module.exports = {
 
         // Count icons on map
         
+        // TODO hide initially, otherwise "no basemap" case flickers
+        // TODO show target icon on stimulus display?
+
         () => {
         
           let BASE_MAPS = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");       
