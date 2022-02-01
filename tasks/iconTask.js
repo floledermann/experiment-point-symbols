@@ -38,6 +38,12 @@ function renderIcon(ctx, condition) {
     let w = img.width * scale,
         h = img.height * scale;
     
+    console.log("size", condition.size);
+    console.log("scaleFactor", scaleFactor);
+    console.log("height", img.height);
+    console.log("scale", scale);
+    console.log("pixel height", img.height * scale);
+    
     if (condition.offset) {
       ctx.translate(condition.offset[0], condition.offset[1]);
     }

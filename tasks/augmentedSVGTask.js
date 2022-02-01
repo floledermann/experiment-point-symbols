@@ -51,10 +51,12 @@ function svgRenderer(options) {
       locations[i].innerHTML = '';
       
       let scaleFactor = condition.iconSize * condition.iconScaleFactor / condition.width;
-      let offset = 15 / 2;
+      let offset = condition.iconOffset || 0;
+      
+      if (!Array.isArray(offset)) offset = [offset,offset];
 
       if (i < condition.indices.length) {
-        locations[i].innerHTML = '<image href="' + iconURLs[condition.indices[i]] + '" width="' + icon.baseSize + '" height="' + icon.baseSize + '" transform="scale(' + scaleFactor + ')" x="' + (-offset) + '" y="-' + offset + '" />';
+        locations[i].innerHTML = '<image href="' + iconURLs[condition.indices[i]] + '" width="' + icon.baseSize + '" height="' + icon.baseSize + '" transform="scale(' + scaleFactor + ')" x="' + (offset[0]) + '" y="' + offset[1] + '" />';
       }
     };
   };
@@ -81,6 +83,7 @@ function svgRenderer(options) {
         let svg = document.createElement("object");
         
         for (let key of options.dimensions) {
+          console.log("Dimension: ", key, condition[key]);
           condition[key] = display.dimensionToScreenPixels(condition[key], condition);
         }
 

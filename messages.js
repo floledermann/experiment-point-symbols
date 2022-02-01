@@ -32,7 +32,7 @@ How is your visual capability right now?`,
 start1:
 `Thank you! We can now begin the experiment.
 
-In this experiment, we will ask you to perform some tasks at a series of stations, labeled “Station&nbsp;A” to “Station&nbsp;D”. These are located to your right. You will begin and end the experiment at this monitor, labeled “Main Monitor”.
+In this experiment, we will ask you to perform some tasks at a series of stations, labeled “Station&nbsp;A” to “Station&nbsp;C”. These are located on the desks to your right. You will begin and end the experiment at this monitor, labeled “Main Monitor”.
 
 Please take the response device (mobile phone) with you as you move from station to station. 
 

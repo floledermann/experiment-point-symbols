@@ -34,13 +34,13 @@ htmlButtons.defaults({
 });
 
 
-const DEBUG = false;  
+let DEBUG = false;  
 //DEBUG = true;
 
 let ICON_SETS = {
   "maki-triangular": {
     set: "maki",
-    baseSize: 15,
+    baseSize: 13,
     icons: [
       { icon: "construction", label: "Construction Site", similars: "mountain,triangle,place-of-worship,volcano" },
       { icon: "mountain", label: "Mountain", similars: "triangle,construction,volcano,place-of-worship" },
@@ -51,7 +51,7 @@ let ICON_SETS = {
   },
   "maki-rectangular": {
     set: "maki",
-    baseSize: 15,
+    baseSize: 13,
     icons: [
       { icon: "cemetery", label: "Cemetery", plural: "Cemeteries", similars: "waste-basket,elevator,fuel,charging-station" },
       { icon: "charging-station", label: "Charging Station", similars: "fuel,elevator,cemetery,waste-basket" },
@@ -103,9 +103,8 @@ Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
 
 // sizes in mm        
 let SIZES = [1.5, 1.25, 1.0, 0.85, 0.7, 0.6, 0.5, 0.4];
-// TODO: icon size is too small! why?
 // for debug on monitor, double size
-if (DEBUG) SIZES = SIZES.map(s => 2*s);
+if (DEBUG) SIZES = SIZES.map(s => 10*s);
 
 SIZES = SIZES.map(s => s+"mm");
 
@@ -118,13 +117,11 @@ let PIXEL_SIZES = {
 }
 
 let MAP_SIZES = [1.25, 0.85, 0.7, 0.6, 0.5, 0.4];
-if (DEBUG) MAP_SIZES = MAP_SIZES.map(s => 2*s);
+if (DEBUG) MAP_SIZES = MAP_SIZES.map(s => 10*s);
 MAP_SIZES = MAP_SIZES.map(s => s+"mm");
 
-// TODO check/optimize results output
 // TODO subjective tasks
-// TODO auto-fullscreen on response device?
-// TODO calibrate centerpoints in lab
+// TODO check/optimize results output
 
 // helper functions for svg map task
 // calculate random indices for a given number of targetIcons, map positions and icon types
@@ -254,7 +251,7 @@ module.exports = {
   `,
   
   tasks: [
-/*
+
     pause({
       message: {
         "*": "Please start the experiment at the Main Monitor.",
@@ -268,7 +265,7 @@ module.exports = {
         "main.display": messages.survey1_age
       },
       button: htmlButtons([
-        "16-25",
+        "18-25",
         "26-35",
         "36-45",
         "46-55",
@@ -293,7 +290,7 @@ module.exports = {
       name: "survey-gender",
       store: true
     }),  
-
+/*
     pause({
       message: {
         "*": "Please start the experiment at the Main Monitor.",
@@ -312,16 +309,16 @@ module.exports = {
       name: "survey-language",
       store: true
     }),  
-
+*/
     pause({
       message: {
         "*": "Please start the experiment at the Main Monitor.",
         "main.display": messages.survey4_vision
       },
       button: htmlButtons([
-        "Normal vision",
+        "Normal vision, without correction",
         "Corrected to normal\n(wearing glasses or contact lenses suitable for reading)",
-        "Short-sighted\n(far objects appear blurred)",
+        "Short-sighted\n(distant objects appear blurred)",
         "Far-sighted\n(near objects appear blurred)",
         "Other vision impairment",
         "Would prefer not to answer"
@@ -357,12 +354,12 @@ module.exports = {
         "main.display": messages.start4
       },
     }),  
-*/
+
     loop({
       
       context: {
-        //targetStation: random.sequence(["A","B","C"]),
-        targetStation: sequence(["C","B","A"]),
+        targetStation: random.sequence(["A","B","C"]),
+        //targetStation: sequence(["A","B","C"]),
       },
       
       tasks: [
@@ -377,7 +374,7 @@ module.exports = {
             return msg;
           },
         }),  
-/* 
+
         pause({
           message: context => {
             let msg = {
@@ -395,13 +392,11 @@ module.exports = {
               "*": "Press «Continue» when you are ready at Station " + context.targetStation + ".",
               "control": "Transition to Station " + context.targetStation
             };
-            msg["station" + context.targetStation + ".display"] = "Press the button on the repsonse device that best matches the shown graphics.";
+            msg["station" + context.targetStation + ".display"] = "Press the button on the response device that matches the orientation of the shown graphics.";
             return msg;
           },
         }),  
-*/
 
-        // TODO: buttons layout
         tumblingE({
           // condition
           //rotate: random([-5,+5]), // add random rotation to prevent aliasing
@@ -425,6 +420,17 @@ module.exports = {
           stimulusDisplay: context => "station" + context.targetStation + ".display"
         }),
 
+        pause({
+          message: context => {
+            let msg = {
+              "*": "",
+              "control": "Transition to Station " + context.targetStation
+            };
+            msg["station" + context.targetStation + ".display"] = "Press the button on the response device that best matches the shown graphics.";
+            return msg;
+          },
+        }),  
+        
         // Icon task with real icons
 
         () => {
@@ -439,11 +445,12 @@ module.exports = {
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
             offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
-            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            buttonCondition: { size: "6mm", offset: null, threshold: false },
             baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
-              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null
+              display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null,
+              display: config => iconTask.renderer
             },
           })
         },
@@ -460,7 +467,7 @@ module.exports = {
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
             offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
-            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            buttonCondition: { size: "6mm", offset: null, threshold: false },
             baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
@@ -481,7 +488,7 @@ module.exports = {
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
             offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
-            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            buttonCondition: { size: "6mm", offset: null, threshold: false },
             baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
@@ -502,7 +509,7 @@ module.exports = {
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
             offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
-            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            buttonCondition: { size: "6mm", offset: null, threshold: false },
             baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
@@ -512,7 +519,7 @@ module.exports = {
         },
 
         // Icon task with threshold
-       
+  
         () => {
           
           let SET = ICON_SETS["maki-rectangular"];
@@ -528,7 +535,7 @@ module.exports = {
             scaleFactor: 1/SET.baseSize,
             pixelAlign: true,
             threshold: 128,
-            buttonCondition: { size: "8mm", offset: null, threshold: false },
+            buttonCondition: { size: "6mm", offset: null, threshold: false },
             baseURL: resource.url("resources/icons/"),
             resources: "resources/icons",
             interfaces: {
@@ -552,7 +559,7 @@ module.exports = {
               return sequence(PIXEL_SIZES[context.targetStation], { stepCount: STEP_COUNT })(context)
             },
             pixelAlign: true,
-            buttonCondition: context => condition => ({ size: "8mm", icon: "icons/" + condition.iconId + ".svg" }),
+            buttonCondition: context => condition => ({ size: "6mm", icon: "icons/" + condition.iconId + ".svg" }),
             transformCondition: context => condition => {
               condition.icon = "icons_hinted/" + condition.iconId + "_" + Math.round(parseFloat(condition.size)) + ".png"
             },
@@ -577,7 +584,7 @@ module.exports = {
               return sequence(PIXEL_SIZES[context.targetStation], { stepCount: STEP_COUNT })(context)
             },
             pixelAlign: true,
-            buttonCondition: context => condition => ({ size: "8mm", icon: "icons/" + condition.iconId + ".svg" }),
+            buttonCondition: context => condition => ({ size: "6mm", icon: "icons/" + condition.iconId + ".svg" }),
             transformCondition: context => condition => {
               condition.icon = "icons_hinted/" + condition.iconId + "_" + Math.round(parseFloat(condition.size)) + ".png"
             },
@@ -588,7 +595,7 @@ module.exports = {
             },
           })
         },
-        
+
         // Contrast-enhanced icons
         // TODO: takes too long / too small sizes on low resolution
         () => {
@@ -603,7 +610,7 @@ module.exports = {
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
             offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
-            buttonCondition: context => condition => ({ size: "8mm", offset: null, icon: "icons/" + condition.iconId + ".svg" }),
+            buttonCondition: context => condition => ({ size: "6mm", offset: null, icon: "icons/" + condition.iconId + ".svg" }),
             transformCondition: context => condition => {
               condition.icon = "icons_enhanced/" + condition.iconId + ".svg"
             },
@@ -620,6 +627,18 @@ module.exports = {
         // TODO: Subjective judgement of shape distortion with contrast enhancement
         
         // "How confident are you that the shown graphics resembles exactly the icon: "
+
+        pause({
+          message: context => {
+            let msg = {
+              "*": "",
+              "control": "Message at station " + context.targetStation
+            };
+            msg["station" + context.targetStation + ".display"] = "Please count the indicated icons on the map accurately, but also as fast as possible.";
+            return msg;
+          },
+        }),  
+        
 
         // Count icons on map
         
@@ -638,21 +657,26 @@ module.exports = {
             width: "60mm",
             height: "60mm",
             //countsByIndex: countsByIndex,
-            count: random.pick([2,3,4,5,6]),
-            iconData: random.pick(SET.icons),
+            count: random.pick([1,2,3,4,5,6,7]),
+            icon: random.pick(SET.icons.map(i => i.icon)),
             iconBaseURL: resource.url("resources/icons/"),
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
             baseMap: random.shuffle([true, false], {loop: true}),
             // maybe do a coarse pass, store result in context and do a fine pass next
-            iconSize: sequence(MAP_SIZES, {stepCount: STEP_COUNT }),
+            iconSize: sequence(["1mm"] || MAP_SIZES, {stepCount: STEP_COUNT }),
             // TODO: ???? is this needed?
-            iconScaleFactor: 77,
+            //               map size in mm, multiplied with icon size adjustment (maki only 13 pixel out of 15 high)
+            iconScaleFactor: 100 / 0.96 * 13 / 15,
+            iconOffset: -15 / 2,
             // static configuration
             transformCondition: context => condition => {
-              // count is number of first icon, always 12 spots
-              condition.indices = randomIndices(condition.count, 12, condition.iconData.similars.length);
+              // count is number of first icon, always 12 spots, 5 kinds
+              condition.indices = randomIndices(condition.count, 12, 5);
             },
-            dimensions: "iconSize",
+            transformConditionOnClient: context => condition => {
+              condition.iconData = SET.icons.find(i => i.icon == condition.icon);
+            },
+            //dimensions: "iconSize",
             interfaces: {
               display: config => context => 
                 "station" + context.targetStation == context.role ? augmentedSVGTask.renderer(context) : null,
@@ -668,7 +692,7 @@ module.exports = {
           });
         
         },
-        
+   
         () => {
         
           let BASE_MAPS = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");       
@@ -689,7 +713,9 @@ module.exports = {
             // maybe do a coarse pass, store result in context and do a fine pass next
             iconSize: sequence(MAP_SIZES, {stepCount: STEP_COUNT }),
             // TODO: ???? is this needed?
-            iconScaleFactor: 77,
+            //               map size in mm, multiplied with icon size adjustment (maki only 13 pixel out of 15 high)
+            iconScaleFactor: 100 / 0.96 * 13 / 15,
+            iconOffset: -15 / 2,
             // static configuration
             transformCondition: context => condition => {
               // count is number of first icon, always 12 spots
@@ -711,7 +737,7 @@ module.exports = {
           });
         
         },
-        
+
       ] // end of loop tasks
     }),
 
