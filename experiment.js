@@ -120,7 +120,7 @@ let MAP_SIZES = [1.25, 0.85, 0.7, 0.6, 0.5, 0.4];
 if (DEBUG) MAP_SIZES = MAP_SIZES.map(s => 10*s);
 MAP_SIZES = MAP_SIZES.map(s => s+"mm");
 
-// TODO cut larger bezels
+// bezels width: 66mm height: 72mm
 
 // helper functions for svg map task
 // calculate random indices for a given number of targetIcons, map positions and icon types
@@ -290,26 +290,7 @@ module.exports = {
       name: "survey-gender",
       store: true
     }),  
-/*
-    pause({
-      message: {
-        "*": "Please start the experiment at the Main Monitor.",
-        "main.display": messages.survey3_language
-      },
-      button: htmlButtons([
-        "English",
-        "German",
-        "Greek",
-        "Russian or other cyrillic",
-        "Other European\nor Latin American",
-        "Chinese",
-        "Japanese",
-        "Other Asian or African"
-      ]),
-      name: "survey-language",
-      store: true
-    }),  
-*/
+
     pause({
       message: {
         "*": "Please start the experiment at the Main Monitor.",
@@ -387,6 +368,7 @@ module.exports = {
         }),  
 
         pause({
+          skip: context => context.targetStation != "B",
           message: context => {
             let msg = {
               "*": "Press «Continue» when you are ready at Station " + context.targetStation + ".",
@@ -398,7 +380,6 @@ module.exports = {
         }),  
 
         tumblingE({
-          // condition
           //rotate: random([-5,+5]), // add random rotation to prevent aliasing
           angle: random.shuffle([0,90,180,270], { loop: true, preventContinuation: true }),
           pixelAlign: false,
@@ -426,7 +407,7 @@ module.exports = {
               "*": "",
               "control": "Transition to Station " + context.targetStation
             };
-            msg["station" + context.targetStation + ".display"] = "Press the button on the response device that best matches the shown graphics.";
+            msg["station" + context.targetStation + ".display"] = "Next Task:\nPress the button on the response device that best matches the shown graphics.\n\nPress «Continue» when you are ready.";
             return msg;
           },
         }),  
@@ -450,7 +431,6 @@ module.exports = {
             resources: "resources/icons",
             interfaces: {
               display: config => context => "station" + context.targetStation == context.role ? iconTask.renderer(context) : null,
-              display: config => iconTask.renderer
             },
           })
         },
@@ -597,7 +577,6 @@ module.exports = {
         },
 
         // Contrast-enhanced icons
-        // TODO: takes too long / too small sizes on low resolution
         () => {
                     
           let SET = ICON_SETS["nps-vertical"];
@@ -634,7 +613,7 @@ module.exports = {
               "*": "",
               "control": "Message at station " + context.targetStation
             };
-            msg["station" + context.targetStation + ".display"] = "Please count the indicated icons on the map accurately, but also as fast as possible.";
+            msg["station" + context.targetStation + ".display"] = "Next Task:\nCount the indicated icons on the map accurately, but also as fast as possible.\n\nPress «Continue» when you are ready.";
             return msg;
           },
         }),  

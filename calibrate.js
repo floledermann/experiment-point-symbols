@@ -35,7 +35,7 @@ module.exports = {
       pixelAlign: false,
       foregroundIntensity: sequence.loop([0,0,0,0,1]),
       backgroundIntensity: 1,
-      size: "48mm",
+      size: "64mm",
       responseCondition: { size: "5mm" }
     }),
 /*
