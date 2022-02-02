@@ -122,6 +122,9 @@ MAP_SIZES = MAP_SIZES.map(s => s+"mm");
 
 // bezels width: 66mm height: 72mm
 
+// TODO metal strips for bezels
+// TODO measure brightness of xperia with camera
+
 // helper functions for svg map task
 // calculate random indices for a given number of targetIcons, map positions and icon types
 
