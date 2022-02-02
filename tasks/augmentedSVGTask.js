@@ -81,6 +81,18 @@ function svgRenderer(options) {
       render: function(condition) {
         
         let svg = document.createElement("object");
+        svg.style.visibility = "hidden";
+        
+        let header = document.createElement("header");
+        header.innerHTML = 'Count: <img src="' + (condition.iconBaseURL + condition.iconData.svg) + 
+                           '" style="width: 1.2em; height: 1.2em;"> ' + 
+                           (condition.iconData.plural || (condition.iconData.label + "s"));
+        header.style.fontSize = (display.dimensionToScreenPixels("4mm") / dppx) + "px";
+        parent.style.backgroundColor = "rgb(90%,90%,90%)";
+        header.style.color = "#000000";
+        header.style.marginBottom = (display.dimensionToScreenPixels("1mm") / dppx) + "px";
+        //header.style.position = "absolute";
+        
         
         for (let key of options.dimensions) {
           console.log("Dimension: ", key, condition[key]);
@@ -93,9 +105,11 @@ function svgRenderer(options) {
         
         svg.addEventListener("load", e => {
           augmentSVG(svg.getSVGDocument(), condition);
+          svg.style.visibility = "visible";
         });
         
-        parent.innerHTML = "";    
+        parent.innerHTML = "";  
+        parent.appendChild(header);        
         parent.appendChild(svg);
       }
     }

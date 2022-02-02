@@ -642,9 +642,6 @@ module.exports = {
 
         // Count icons on map
         
-        // TODO hide initially, otherwise "no basemap" case flickers
-        // TODO show target icon on stimulus display?
-
         () => {
         
           let BASE_MAPS = "map_1,map_2,map_3,map_4".split(",").map(f => "resources/basemaps/" + f + ".svg");       
@@ -663,8 +660,7 @@ module.exports = {
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
             baseMap: random.shuffle([true, false], {loop: true}),
             // maybe do a coarse pass, store result in context and do a fine pass next
-            iconSize: sequence(["1mm"] || MAP_SIZES, {stepCount: STEP_COUNT }),
-            // TODO: ???? is this needed?
+            iconSize: sequence(MAP_SIZES, {stepCount: STEP_COUNT }),
             //               map size in mm, multiplied with icon size adjustment (maki only 13 pixel out of 15 high)
             iconScaleFactor: 100 / 0.96 * 13 / 15,
             iconOffset: -15 / 2,
@@ -680,6 +676,7 @@ module.exports = {
             interfaces: {
               display: config => context => 
                 "station" + context.targetStation == context.role ? augmentedSVGTask.renderer(context) : null,
+              //display: config => context => augmentedSVGTask.renderer(context),
               response: config => htmlButtons({
                 header: cond => legendHeader(cond.iconBaseURL, cond.iconData),
                 buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
@@ -706,20 +703,22 @@ module.exports = {
             height: "60mm",
             //countsByIndex: countsByIndex,
             count: random.pick([2,3,4,5,6]),
-            iconData: random.pick(SET.icons),
+            icon: random.pick(SET.icons.map(i => i.icon)),
             iconBaseURL: resource.url("resources/icons/"),
             locationSelector: 'g[id="map: multipoint_rural"] > g[fill="#ff0707"]',
             baseMap: random.shuffle([true, false], {loop: true}),
             // maybe do a coarse pass, store result in context and do a fine pass next
             iconSize: sequence(MAP_SIZES, {stepCount: STEP_COUNT }),
-            // TODO: ???? is this needed?
             //               map size in mm, multiplied with icon size adjustment (maki only 13 pixel out of 15 high)
             iconScaleFactor: 100 / 0.96 * 13 / 15,
             iconOffset: -15 / 2,
             // static configuration
             transformCondition: context => condition => {
-              // count is number of first icon, always 12 spots
-              condition.indices = randomIndices(condition.count, 12, condition.iconData.similars.length);
+              // count is number of first icon, always 12 spots, 5 kinds
+              condition.indices = randomIndices(condition.count, 12, 5);
+            },
+            transformConditionOnClient: context => condition => {
+              condition.iconData = SET.icons.find(i => i.icon == condition.icon);
             },
             dimensions: "iconSize",
             interfaces: {
