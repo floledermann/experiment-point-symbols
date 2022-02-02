@@ -3,7 +3,7 @@ module.exports = {
 welcome:
 `Welcome to this experiment!
 
-Before we begin, we would like to ask you four short questions.
+Before we begin, we would like to ask you three short questions.
 
 For responding to the questions, please use the mobile device in front of you.
 

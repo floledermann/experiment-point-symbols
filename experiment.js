@@ -120,8 +120,7 @@ let MAP_SIZES = [1.25, 0.85, 0.7, 0.6, 0.5, 0.4];
 if (DEBUG) MAP_SIZES = MAP_SIZES.map(s => 10*s);
 MAP_SIZES = MAP_SIZES.map(s => s+"mm");
 
-// TODO subjective tasks
-// TODO check/optimize results output
+// TODO cut larger bezels
 
 // helper functions for svg map task
 // calculate random indices for a given number of targetIcons, map positions and icon types
@@ -212,21 +211,21 @@ module.exports = {
       display: grid;
       grid-template-columns: repeat(5, 6em);
     }
-
-    /* buttons for icons selection - mayby define in variable and assign in each task, or add selector? */
-    .has-ui-response .buttons button {
-      xheight: 5.8em;
-    }
-    .has-ui-response .buttons button .label {
-      xheight: 2em;
-    }
     
     @media (orientation: portrait) {
       .buttons {
         display: grid;
         grid-template-columns: repeat(1, 12em);
         margin-top: 2em;
-        font-size: 0.8em;
+        font-size: 1em;
+        flex: 0;
+      }
+      .buttons button {
+        margin: 8px;
+      }
+      .current-task-survey-age .buttons button ,
+      .current-task-survey-gender .buttons button {
+        margin: 12px;
       }
       .legend {
         font-size: 0.8em;
@@ -239,12 +238,13 @@ module.exports = {
       }
       body[class*="current-task-icon-basemap-"] h1 {
         font-size: 1em;
-        margin-top: 2.5em;
+        margin: 0 0 0.8em 0;
       }     
       body[class*="current-task-icon-basemap-"] .buttons {
         grid-template-columns: repeat(3, 5em);
-        grid-template-rows: repeat(5, 3em);
+        grid-template-rows: repeat(5, 2.8em);
         font-size: 1em;
+        margin-top: 1em;
       }
       
     }
