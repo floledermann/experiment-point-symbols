@@ -111,12 +111,12 @@ SIZES = SIZES.map(s => s+"mm");
 //let PIXEL_SIZES = [20,19,18,17,16,15,14,13,12,11,10,9,8,7,6].map(s => s+"px");
 
 let PIXEL_SIZES = {
-  "A": [20,18,16,14,13,12,11,10,9,8,7].map(s => s+"px"),
-  "B": [20,18,17,15,14,12,11].map(s => s+"px"),
+  "A": [20,18,16,14,13,12,10,9,8,7].map(s => s+"px"),
+  "B": [20,18,15,14,12,11].map(s => s+"px"),
   "C": [10,9,8,7,6].map(s => s+"px"),
 }
 
-let MAP_SIZES = [1.25, 0.85, 0.7, 0.6, 0.5, 0.4];
+let MAP_SIZES = [1.25, 0.85, 0.7, 0.6, 0.5];
 if (DEBUG) MAP_SIZES = MAP_SIZES.map(s => 10*s);
 MAP_SIZES = MAP_SIZES.map(s => s+"mm");
 
@@ -722,13 +722,14 @@ module.exports = {
       ] // end of loop tasks
     }),
 
+/*
     pause({
       message: {
         "*": "Please continue the experiment at the Main Monitor.",
         "main.display": "Thank you for your effort!\n\nThe experiment was completed successfully.\nThank you for your participation!"
       },
     }),
-
+*/
     pause({
       message: {
         display: "The experiment was completed successfully.\nThank you for your participation!",
