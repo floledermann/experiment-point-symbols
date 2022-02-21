@@ -422,7 +422,7 @@ module.exports = {
           let STEP_COUNT = 4;
           
           return iconTask({
-            name: "icon-default-" + SET.set,
+            name: "icon-default-maki-rectangular",
             icon: random.shuffle(SET.icons.map(i => i.svg), { multiple: 2, loop: true, preventContinuation: true }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
@@ -443,7 +443,7 @@ module.exports = {
           let STEP_COUNT = 4;
           
           return iconTask({
-            name: "icon-default-" + SET.set,
+            name: "icon-default-maki-triangular",
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
@@ -464,7 +464,7 @@ module.exports = {
           let STEP_COUNT = 2;
           
           return iconTask({
-            name: "icon-default-" + SET.set,
+            name: "icon-default-nps-vertical",
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
@@ -485,7 +485,7 @@ module.exports = {
           let STEP_COUNT = 2;
           
           return iconTask({
-            name: "icon-default-" + SET.set,
+            name: "icon-default-osm-castles",
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
@@ -508,7 +508,7 @@ module.exports = {
           let STEP_COUNT = 4;
           
           return iconTask({
-            name: "icon-threshold-" + SET.set,
+            name: "icon-threshold-maki-rectangular",
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
             size: context => {
@@ -534,7 +534,7 @@ module.exports = {
           let STEP_COUNT = 4;
           
           return iconTask({
-            name: "icon-hinted-" + SET.set,
+            name: "icon-hinted-maki-rectangular",
             iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
             size: context => {
@@ -559,7 +559,7 @@ module.exports = {
           let STEP_COUNT = 4;
           
           return iconTask({
-            name: "icon-hinted-" + SET.set,
+            name: "icon-hinted-maki-triangular",
             iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
             size: context => {
@@ -585,7 +585,7 @@ module.exports = {
           let STEP_COUNT = 4;
           
           return iconTask({
-            name: "icon-enhanced-" + SET.set,
+            name: "icon-enhanced-nps-vertical",
             iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
             size: sequence(SIZES, { stepCount: STEP_COUNT }),
@@ -630,7 +630,7 @@ module.exports = {
           let STEP_COUNT = 4;
                     
           return augmentedSVGTask({
-            name: "icon-basemap-" + SET.set,
+            name: "icon-basemap-maki-triangular",
             svg: random.shuffle(BASE_MAPS, {loop: true}),
             width: "60mm",
             height: "60mm",
