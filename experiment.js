@@ -680,7 +680,7 @@ module.exports = {
           let STEP_COUNT = 4;
                     
           return augmentedSVGTask({
-            name: "icon-basemap-" + SET.set,
+            name: "icon-basemap-maki-rectangular",
             svg: random.shuffle(BASE_MAPS, {loop: true}),
             width: "60mm",
             height: "60mm",
