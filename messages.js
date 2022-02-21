@@ -59,7 +59,7 @@ Press «Continue» to continue the instructions.`,
 start4:
 `At each station, you will be shown a series of graphics and will be asked to press the button on the response device that best matches the graphics. Try to respond as accurate as you can, without moving your head closer to the display.
 
-If you do not know the correct answer, you are allowed to guess the answer or press a random button!
+If you do not know the correct answer, you may guess the answer or press a random button!
 
 Press «Continue» when you are ready to start the experiment.`,
 
