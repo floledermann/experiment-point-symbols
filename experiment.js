@@ -376,7 +376,7 @@ module.exports = {
               "*": "Press «Continue» when you are ready at Station " + context.targetStation + ".",
               "control": "Transition to Station " + context.targetStation
             };
-            msg["station" + context.targetStation + ".display"] = "Press the button on the response device that matches the orientation of the shown graphics.";
+            msg["station" + context.targetStation + ".display"] = "Next Task:\nPress the button on the response device that matches the orientation of the shown graphics.\n\nPress «Continue» when you are ready.";
             return msg;
           },
         }),  
