@@ -660,7 +660,9 @@ module.exports = {
               //display: config => context => augmentedSVGTask.renderer(context),
               response: config => htmlButtons({
                 header: cond => legendHeader(cond.iconBaseURL, cond.iconData),
-                buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
+                buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",").map(
+                  n => ({label: n, response: { count: +n }})
+                )
               })
             },
             resources: [
@@ -707,7 +709,9 @@ module.exports = {
                 "station" + context.targetStation == context.role ? augmentedSVGTask.renderer(context) : null,
               response: config => htmlButtons({
                 header: cond => legendHeader(cond.iconBaseURL, cond.iconData),
-                buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",")
+                buttons: "0,1,2,3,4,5,6,7,8,9,10,11,12".split(",").map(
+                  n => ({label: n, response: { count: +n }})
+                )
               })
             },
             resources: [
