@@ -388,14 +388,14 @@ module.exports = {
           foregroundIntensity: 0,
           backgroundIntensity: 1,
           size: context => {
-            // hack: if we are not at station A, immediately jump to next task
+            // hack: if we are not at station B, immediately jump to next task
             if (context.targetStation != "B") return () => null;
             return staircase({
-              startValue: "1.0mm",
-              stepSize: 0.1,
-              stepSizeFine: 0.05,
+              startValue: "1.163mm",
+              stepSize: 1.2,
+              stepSizeFine: Math.sqrt(1.2),
               numReversalsFine: 3,
-              stepType: "linear", 
+              stepType: "multiply", 
               minReversals: DEBUG ? 2 : 5,
             })(context)
           },
