@@ -119,13 +119,11 @@ let PIXEL_SIZES = {
   "C": [10,9,8,7,6].map(s => s+"px"),
 }
 
-let MAP_SIZES = [1.25, 0.85, 0.7, 0.6, 0.5];
+let MAP_SIZES = [1.5, 1.25, 1.0, 0.85, 0.7, 0.6]; // , 0.5
 if (DEBUG) MAP_SIZES = MAP_SIZES.map(s => 10*s);
 MAP_SIZES = MAP_SIZES.map(s => s+"mm");
 
 // bezels width: 66mm height: 72mm
-
-// TODO measure brightness of xperia with camera
 
 // helper functions for svg map task
 // calculate random indices for a given number of targetIcons, map positions and icon types
