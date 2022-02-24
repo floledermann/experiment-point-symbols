@@ -103,10 +103,13 @@ Object.values(ICON_SETS).forEach(s => s.icons.forEach(i => {
 
 // sizes in mm        
 let SIZES = [1.5, 1.25, 1.0, 0.85, 0.7, 0.6, 0.5, 0.4];
+let SIZES_2 = [1.5, 1.25, 1.0, 0.85, 0.7, 0.6, 0.5];
+
 // for debug on monitor, double size
 if (DEBUG) SIZES = SIZES.map(s => 10*s);
 
 SIZES = SIZES.map(s => s+"mm");
+SIZES_2 = SIZES_2.map(s => s+"mm");
 
 //let PIXEL_SIZES = [20,19,18,17,16,15,14,13,12,11,10,9,8,7,6].map(s => s+"px");
 
@@ -461,13 +464,13 @@ module.exports = {
         () => {
           
           let SET = ICON_SETS["nps-vertical"];
-          let STEP_COUNT = 2;
+          let STEP_COUNT = 3;
           
           return iconTask({
             name: "icon-default-nps-vertical",
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
-            size: sequence(SIZES, { stepCount: STEP_COUNT }),
+            size: sequence(SIZES_2, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
             offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
             buttonCondition: { size: "6mm", offset: null, threshold: false },
@@ -488,7 +491,7 @@ module.exports = {
             name: "icon-default-osm-castles",
             icon: random.shuffle(SET.icons.map(i => i.svg), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: i.svg, response: {icon: i.svg}})),
-            size: sequence(SIZES, { stepCount: STEP_COUNT }),
+            size: sequence(SIZES_2, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
             offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
             buttonCondition: { size: "6mm", offset: null, threshold: false },
@@ -588,7 +591,7 @@ module.exports = {
             name: "icon-enhanced-nps-vertical",
             iconId: random.shuffle(SET.icons.map(i => SET.set + "/" + i.icon), { loop: true, preventContinuation: false }),
             choices: SET.icons.map((i) => ({label: i.label, icon: "icons/" + i.svg, response: {iconId: SET.set + "/" + i.icon}})),
-            size: sequence(SIZES, { stepCount: STEP_COUNT }),
+            size: sequence(SIZES_2, { stepCount: STEP_COUNT }),
             scaleFactor: 1/SET.baseSize,
             offset: sequence.array([random.range(-0.5,0.5), random.range(-0.5,0.5)]), // random subpixel offset
             buttonCondition: context => condition => ({ size: "6mm", offset: null, icon: "icons/" + condition.iconId + ".svg" }),
