@@ -20,15 +20,15 @@ function renderIcon(ctx, condition) {
     size: 10,
   }, condition);
   
-  let img = new Image();
-  img.src = condition.baseURL + condition.icon;
-  
   let canvas2 = null, ctx2 = null;
   if (condition.threshold) {
     canvas2 = new OffscreenCanvas(ctx.canvas.width, ctx.canvas.height);
     ctx2 = canvas2.getContext("2d");
     ctx2.setTransform(ctx.getTransform());
   }
+  
+  let img = new Image();
+  img.src = condition.baseURL + condition.icon;
   
   img.onload = () => {
     
@@ -47,14 +47,14 @@ function renderIcon(ctx, condition) {
     if (condition.offset) {
       ctx.translate(condition.offset[0], condition.offset[1]);
     }
-    
+
     if (condition.pixelAlign) {
       ctx.drawImage(img, Math.round(-w/2), Math.round(-h/2), w, h);
     }
     else {
       ctx.drawImage(img, -w/2, -h/2, w, h);
     }
-        
+  
     if (condition.threshold) {
       let idata = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
       let data = idata.data;
