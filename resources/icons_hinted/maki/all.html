@@ -1,0 +1,55 @@
+<html>
+<head>
+<style>
+table {
+  border-spacing: 12px;
+}
+table th {
+  font-family: Arial;
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+}
+table td {
+  text-align: center;
+  padding-left: 2px;
+}
+</style>
+</head>
+<body>
+<table id="table">
+</table>
+<script>
+const names = "cemetery,charging-station,elevator,fuel,waste-basket,construction,mountain,place-of-worship,triangle,volcano".split(",");
+
+let table = document.getElementById("table");
+
+let tr = document.createElement("tr");
+table.appendChild(tr);
+for (let size=20; size >= 6; size--) {
+  let td = document.createElement("th");
+  td.textContent = size + "";
+  tr.appendChild(td);
+}
+
+for (let icon of names) {
+
+  let tr = document.createElement("tr");
+  
+  for (let size=20; size >= 6; size--) {
+    let td = document.createElement("td");
+    let img = document.createElement("img");
+    img.src = icon + "_" + size + ".png";
+    img.style.verticalAlign = "middle";
+    //img.style.margin = (22-size) + "px";
+    td.appendChild(img);
+    tr.appendChild(td);
+  }
+  
+  table.appendChild(tr);
+}
+
+</script>
+</body>
+</html>
