@@ -1,6 +1,6 @@
 ### Experiment: Minimum dimensions for cartographic point symbols
 
-This repository contains the code for the study undertaken as part of my PhD research.
+This repository contains code for a study undertaken as part of my PhD research.
 
 The file `experiment.js` contains the code configuring all the tasks of the experiment.
 
