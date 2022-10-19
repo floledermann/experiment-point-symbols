@@ -1,1 +1,1 @@
-# Experiment: Contrast Enhancement for Map Symbols
+# Experiment: Minimum dimensions for cartographic point symbols
