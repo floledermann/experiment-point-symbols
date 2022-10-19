@@ -1,1 +1,1 @@
-# Experiment: Minimum dimensions for cartographic point symbols
+### Experiment: Minimum dimensions for cartographic point symbols
